@@ -1,0 +1,300 @@
+{
+ "_story": "Nelia Rolfson, 74. Admitted 2026-09-30 with hyperglycemic crisis, type 2 diabetes (generated from: hyperglycemia rule).",
+ "encounters": [
+  {
+   "resourceType": "Encounter",
+   "id": "gen-6e96-enc",
+   "status": "in-progress",
+   "class": "inpatient",
+   "reason": "Hyperglycemic crisis, type 2 diabetes",
+   "period": {
+    "start": "2026-09-30T15:20:00"
+   },
+   "location": "4 West, bed 11",
+   "attending": "Dr. Morgana Pendragon",
+   "dischargePlan": {
+    "readyDate": "2026-10-03",
+    "medications": [
+     {
+      "action": "new",
+      "drug": "insulin glargine",
+      "dose": "18 units",
+      "quantity": 5,
+      "sig": "inject 18 units under the skin at bedtime",
+      "reason": "long-acting insulin for high sugars"
+     }
+    ],
+    "equipment": [
+     {
+      "item": "Glucose meter and test strips",
+      "detail": "check sugar before breakfast and dinner",
+      "prior_auth": false,
+      "evidence": [],
+      "diagnosis_codes": [
+       "E11.65"
+      ]
+     }
+    ],
+    "followUp": {
+     "specialty": "endocrinology",
+     "within_days": 14,
+     "reason": "Diabetes follow-up after a hyperglycemic crisis",
+     "note": "bring the glucose log"
+    },
+    "warningSigns": "sugar over 300 twice in a row, sugar under 70 with shaking or sweating, or vomiting"
+   },
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "conditions": [
+  {
+   "resourceType": "Condition",
+   "id": "gen-6e96-cond-1",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Type 2 diabetes with hyperglycemia",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "E11.65",
+      "display": "Type 2 diabetes with hyperglycemia"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-30",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Condition",
+   "id": "gen-6e96-cond-2",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Dehydration",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "E86.0",
+      "display": "Dehydration"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-30",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medications": [
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-6e96-med-ip1",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Insulin regular infusion per protocol"
+   },
+   "authoredOn": "2026-09-30",
+   "dischargeAction": "stop (hospital only)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-6e96-med-ip2",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Sodium chloride 0.9% IV 150 mL/hour"
+   },
+   "authoredOn": "2026-09-30",
+   "dischargeAction": "stop (hospital only)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medicationHolds": [],
+ "observations": [
+  {
+   "resourceType": "Observation",
+   "id": "gen-6e96-obs-glucose",
+   "category": "laboratory",
+   "code": {
+    "text": "Glucose"
+   },
+   "value": "170 mg/dL",
+   "effectiveDateTime": "2026-10-03T05:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "improved (612 on admission)"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-6e96-obs-a1c",
+   "category": "laboratory",
+   "code": {
+    "text": "Hemoglobin A1c"
+   },
+   "value": "11.8 %",
+   "effectiveDateTime": "2026-10-03T06:30:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "high"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-6e96-obs-creat",
+   "category": "laboratory",
+   "code": {
+    "text": "Creatinine"
+   },
+   "value": "0.9 mg/dL",
+   "effectiveDateTime": "2026-10-03T07:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "normal"
+  }
+ ],
+ "notes": [
+  {
+   "resourceType": "DocumentReference",
+   "id": "gen-6e96-note-progress",
+   "date": "2026-10-03",
+   "type": {
+    "text": "Progress note, hospital day 3"
+   },
+   "author": "Dr. Morgana Pendragon",
+   "text": "Glucose controlled on basal insulin, eating normally, rehydrated. A1c 11.8 %. Seen twice by the diabetes educator. Plan: discharge on long-acting insulin plus metformin; glucose meter; endocrinology within 2 weeks.",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "messages": [
+  {
+   "resourceType": "Communication",
+   "id": "gen-6e96-msg-1",
+   "sent": "2026-10-02T18:59:00",
+   "sender": "Nelia Rolfson (patient portal)",
+   "text": "How often do I need to check my sugar, and what number is too low? - Nelia",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "allergies": [],
+ "coverage": {
+  "resourceType": "Coverage",
+  "id": "cov-pt-6e965c83",
+  "status": "active",
+  "payor": "Medicare",
+  "plan": "Original Medicare (Parts A & B)",
+  "memberId": "MED-773-7053",
+  "beneficiary": "Patient/pt-6e965c83",
+  "meta": {
+   "tag": [
+    {
+     "code": "workshop-overlay"
+    },
+    {
+     "code": "generated-admission"
+    }
+   ]
+  }
+ },
+ "preferences": {
+  "pharmacy": {
+   "partner": "retail-pharmacy",
+   "name": "Main Street Pharmacy",
+   "address": "212 Elm St, Durham, NC"
+  },
+  "primaryCare": {
+   "partner": "pcp-clinic",
+   "name": "Maple Family Medicine",
+   "clinician": "Dr. Alex Lee"
+  },
+  "consent": {
+   "shareSensitiveWithPcp": false,
+   "note": "No sensitive records on file"
+  },
+  "portalAccount": "nelia.rolfson"
+ }
+}

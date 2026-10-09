@@ -1,0 +1,28 @@
+{
+  "conditions": [
+    {
+      "resourceType": "Condition", "id": "ov-kl-cond-hiv", "clinicalStatus": "active",
+      "code": {"text": "Asymptomatic HIV infection", "coding": [{"system": "http://snomed.info/sct", "code": "91947003", "display": "Asymptomatic human immunodeficiency virus infection"}]},
+      "onsetDateTime": "2018-04-11",
+      "meta": {"tag": [{"code": "workshop-overlay"}],
+               "security": [{"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "HIV", "display": "HIV/AIDS information sensitivity"}]}
+    }
+  ],
+  "medications": [
+    {
+      "resourceType": "MedicationRequest", "id": "ov-kl-med-art", "status": "active",
+      "medication": {"text": "Bictegravir 50 MG / Emtricitabine 200 MG / Tenofovir alafenamide 25 MG Oral Tablet"},
+      "authoredOn": "2026-07-01", "dose": "1 tablet", "quantity": 30,
+      "meta": {"tag": [{"code": "workshop-overlay"}],
+               "security": [{"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "HIV", "display": "HIV/AIDS information sensitivity"}]}
+    }
+  ],
+  "notes": [
+    {
+      "resourceType": "DocumentReference", "id": "ov-kl-note-pcp", "date": "2026-07-01",
+      "type": {"text": "Primary care visit"}, "author": "Dr. Morgana Pendragon",
+      "text": "Routine follow-up. Blood pressure well controlled. Reviewed medication list; refills sent. Return in 6 months.",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    }
+  ]
+}

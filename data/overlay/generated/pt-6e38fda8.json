@@ -1,0 +1,295 @@
+{
+ "_story": "Hobert Lynch, 43. Admitted 2026-09-29 with acute kidney injury on chronic kidney disease (generated from: aki rule).",
+ "encounters": [
+  {
+   "resourceType": "Encounter",
+   "id": "gen-6e38-enc",
+   "status": "in-progress",
+   "class": "inpatient",
+   "reason": "Acute kidney injury on chronic kidney disease",
+   "period": {
+    "start": "2026-09-29T10:05:00"
+   },
+   "location": "4 West, bed 14",
+   "attending": "Dr. Morgana Pendragon",
+   "dischargePlan": {
+    "readyDate": "2026-10-03",
+    "medications": [
+     {
+      "action": "stop",
+      "drug": "naproxen",
+      "reason": "NSAIDs harm the kidneys: avoid"
+     },
+     {
+      "action": "resume",
+      "drug": "hydrochlorothiazide",
+      "reason": "restart blood-pressure tablet"
+     },
+     {
+      "action": "new",
+      "drug": "acetaminophen",
+      "dose": "500 mg",
+      "quantity": 60,
+      "sig": "1 to 2 tablets every 8 hours as needed",
+      "reason": "pain relief instead of naproxen"
+     }
+    ],
+    "equipment": [],
+    "followUp": {
+     "specialty": "nephrology",
+     "within_days": 14,
+     "reason": "Kidney follow-up after acute kidney injury",
+     "note": "repeat kidney blood tests in 3 days"
+    },
+    "warningSigns": "passing much less urine, swollen legs, or feeling very dizzy"
+   },
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "conditions": [
+  {
+   "resourceType": "Condition",
+   "id": "gen-6e38-cond-1",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Acute kidney injury",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "N17.9",
+      "display": "Acute kidney injury"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-29",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Condition",
+   "id": "gen-6e38-cond-2",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Dehydration",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "E86.0",
+      "display": "Dehydration"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-29",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medications": [
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-6e38-med-ip1",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Sodium chloride 0.9% IV 125 mL/hour"
+   },
+   "authoredOn": "2026-09-29",
+   "dischargeAction": "stop (hospital only)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medicationHolds": [
+  {
+   "match": "naproxen",
+   "reason": "Held on admission: NSAIDs worsen kidney injury",
+   "resumeIf": {
+    "observation": "creatinine",
+    "max": 1.3
+   }
+  },
+  {
+   "match": "hydrochlorothiazide",
+   "reason": "Held on admission: dehydration",
+   "resumeIf": {
+    "observation": "creatinine",
+    "max": 1.3
+   }
+  }
+ ],
+ "observations": [
+  {
+   "resourceType": "Observation",
+   "id": "gen-6e38-obs-creat",
+   "category": "laboratory",
+   "code": {
+    "text": "Creatinine"
+   },
+   "value": "1.7 mg/dL",
+   "effectiveDateTime": "2026-10-03T06:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "high (2.6 on admission; baseline 1.1)"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-6e38-obs-k",
+   "category": "laboratory",
+   "code": {
+    "text": "Potassium"
+   },
+   "value": "4.7 mmol/L",
+   "effectiveDateTime": "2026-10-03T07:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "normal"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-6e38-obs-bun",
+   "category": "laboratory",
+   "code": {
+    "text": "Urea nitrogen"
+   },
+   "value": "27 mg/dL",
+   "effectiveDateTime": "2026-10-03T05:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "notes": [
+  {
+   "resourceType": "DocumentReference",
+   "id": "gen-6e38-note-progress",
+   "date": "2026-10-03",
+   "type": {
+    "text": "Progress note, hospital day 4"
+   },
+   "author": "Dr. Morgana Pendragon",
+   "text": "Creatinine improving with IV fluids, 1.7 mg/dL today from 2.6 on admission (baseline 1.1). Eating and drinking well. Plan: discharge; stop naproxen for good; restart hydrochlorothiazide; repeat kidney tests in 3 days; nephrology within 2 weeks.",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "messages": [
+  {
+   "resourceType": "Communication",
+   "id": "gen-6e38-msg-1",
+   "sent": "2026-10-02T19:48:00",
+   "sender": "Hobert Lynch (patient portal)",
+   "text": "Can I keep taking my naproxen for my hand pain? It's the only thing that helps. - Hobert",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "allergies": [],
+ "coverage": {
+  "resourceType": "Coverage",
+  "id": "cov-pt-6e38fda8",
+  "status": "active",
+  "payor": "Aetna",
+  "plan": "Aetna Choice POS II",
+  "memberId": "AET-406-3716",
+  "beneficiary": "Patient/pt-6e38fda8",
+  "meta": {
+   "tag": [
+    {
+     "code": "workshop-overlay"
+    },
+    {
+     "code": "generated-admission"
+    }
+   ]
+  }
+ },
+ "preferences": {
+  "pharmacy": {
+   "partner": "retail-pharmacy",
+   "name": "Main Street Pharmacy",
+   "address": "212 Elm St, Durham, NC"
+  },
+  "primaryCare": {
+   "partner": "pcp-clinic",
+   "name": "Maple Family Medicine",
+   "clinician": "Dr. Alex Lee"
+  },
+  "consent": {
+   "shareSensitiveWithPcp": false,
+   "note": "No sensitive records on file"
+  },
+  "portalAccount": "hobert.lynch"
+ }
+}

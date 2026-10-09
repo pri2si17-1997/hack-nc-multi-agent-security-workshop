@@ -1,0 +1,356 @@
+{
+ "_story": "Kermit Legros, 55. Admitted 2026-09-30 with community-acquired pneumonia, left lower lobe (generated from: pneumonia rule).",
+ "encounters": [
+  {
+   "resourceType": "Encounter",
+   "id": "gen-87c4-enc",
+   "status": "in-progress",
+   "class": "inpatient",
+   "reason": "Community-acquired pneumonia, left lower lobe",
+   "period": {
+    "start": "2026-09-30T10:05:00"
+   },
+   "location": "4 West, bed 16",
+   "attending": "Dr. Morgana Pendragon",
+   "dischargePlan": {
+    "readyDate": "2026-10-03",
+    "medications": [
+     {
+      "action": "new",
+      "drug": "amoxicillin-clavulanate",
+      "dose": "875/125 mg",
+      "quantity": 10,
+      "sig": "1 tablet by mouth twice daily for 5 days",
+      "reason": "complete pneumonia treatment (switch from IV)"
+     }
+    ],
+    "equipment": [
+     {
+      "item": "Home oxygen",
+      "detail": "2 L/min by nasal cannula with exertion",
+      "prior_auth": true,
+      "evidence": [
+       "gen-87c4-obs-spo2walk"
+      ],
+      "diagnosis_codes": [
+       "J18.9",
+       "R09.02"
+      ]
+     }
+    ],
+    "followUp": {
+     "specialty": "primary care",
+     "within_days": 7,
+     "reason": "Hospital follow-up after pneumonia",
+     "note": "repeat chest X-ray in 6 weeks"
+    },
+    "warningSigns": "trouble breathing, fever over 38.5 °C, or chest pain"
+   },
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "conditions": [
+  {
+   "resourceType": "Condition",
+   "id": "gen-87c4-cond-1",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Community-acquired pneumonia, left lower lobe",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "J18.9",
+      "display": "Community-acquired pneumonia, left lower lobe"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-30",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Condition",
+   "id": "gen-87c4-cond-2",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Hypoxemia on exertion",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "R09.02",
+      "display": "Hypoxemia on exertion"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-30",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medications": [
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-87c4-med-ip1",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Ceftriaxone 1 g IV every 24 hours"
+   },
+   "authoredOn": "2026-09-30",
+   "drugClass": "cephalosporin",
+   "dischargeAction": "switch to oral antibiotic",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-87c4-med-ip2",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Azithromycin 500 mg IV daily"
+   },
+   "authoredOn": "2026-09-30",
+   "dischargeAction": "stop (3-day course complete)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medicationHolds": [],
+ "observations": [
+  {
+   "resourceType": "Observation",
+   "id": "gen-87c4-obs-spo2walk",
+   "category": "vital-signs",
+   "code": {
+    "text": "Oxygen saturation, walking on room air",
+    "coding": [
+     {
+      "system": "http://loinc.org",
+      "code": "59408-5"
+     }
+    ]
+   },
+   "value": "88 %",
+   "effectiveDateTime": "2026-10-03T07:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "low: qualifies for home oxygen (≤ 88%)"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-87c4-obs-spo2rest",
+   "category": "vital-signs",
+   "code": {
+    "text": "Oxygen saturation at rest",
+    "coding": [
+     {
+      "system": "http://loinc.org",
+      "code": "59408-5"
+     }
+    ]
+   },
+   "value": "94 %",
+   "effectiveDateTime": "2026-10-03T06:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-87c4-obs-wbc",
+   "category": "laboratory",
+   "code": {
+    "text": "White blood cells"
+   },
+   "value": "8.8 10*3/uL",
+   "effectiveDateTime": "2026-10-03T07:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "normal (14.2 on admission)"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-87c4-obs-creat",
+   "category": "laboratory",
+   "code": {
+    "text": "Creatinine"
+   },
+   "value": "0.9 mg/dL",
+   "effectiveDateTime": "2026-10-03T06:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "normal"
+  }
+ ],
+ "notes": [
+  {
+   "resourceType": "DocumentReference",
+   "id": "gen-87c4-note-progress",
+   "date": "2026-10-03",
+   "type": {
+    "text": "Progress note, hospital day 3"
+   },
+   "author": "Dr. Morgana Pendragon",
+   "text": "Afebrile 48 h, cough improving, WBC normalised. Walking SpO2 88 % on room air: needs home oxygen with exertion. Plan: discharge; switch to oral antibiotic to complete 5 more days; continue home medicines; family doctor within 7 days; repeat chest X-ray in 6 weeks.",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "messages": [
+  {
+   "resourceType": "Communication",
+   "id": "gen-87c4-msg-1",
+   "sent": "2026-10-02T21:12:00",
+   "sender": "Kermit Legros (patient portal)",
+   "text": "Hi Dr. Pendragon, will I have to use the oxygen all the time at home? And can my prescriptions go to Main Street Pharmacy like usual? Thanks, Kermit",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "allergies": [
+  {
+   "resourceType": "AllergyIntolerance",
+   "id": "gen-87c4-alg-1",
+   "substance": "Sulfamethoxazole (sulfa drugs)",
+   "drugClass": "sulfonamide",
+   "reaction": "Rash",
+   "severity": "moderate",
+   "recorded": "2006-07-11",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "coverage": {
+  "resourceType": "Coverage",
+  "id": "cov-pt-87c46349",
+  "status": "active",
+  "payor": "Medicaid",
+  "plan": "NC Medicaid Managed Care",
+  "memberId": "MED-778-9552",
+  "beneficiary": "Patient/pt-87c46349",
+  "meta": {
+   "tag": [
+    {
+     "code": "workshop-overlay"
+    },
+    {
+     "code": "generated-admission"
+    }
+   ]
+  }
+ },
+ "preferences": {
+  "pharmacy": {
+   "partner": "retail-pharmacy",
+   "name": "Main Street Pharmacy",
+   "address": "212 Elm St, Durham, NC"
+  },
+  "primaryCare": {
+   "partner": "pcp-clinic",
+   "name": "Maple Family Medicine",
+   "clinician": "Dr. Alex Lee"
+  },
+  "consent": {
+   "shareSensitiveWithPcp": false,
+   "note": "No consent on file to share sensitive records outside the hospital"
+  },
+  "portalAccount": "kermit.legros"
+ }
+}

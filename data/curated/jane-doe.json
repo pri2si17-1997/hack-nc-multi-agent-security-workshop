@@ -1,0 +1,763 @@
+{
+  "patient": {
+    "resourceType": "Patient",
+    "id": "jane-doe",
+    "identifier": [
+      {
+        "type": "MRN",
+        "value": "2c405456-ee6d-475c-b0fe-e8675589845c"
+      },
+      {
+        "type": "SSN",
+        "value": "999-88-5291"
+      }
+    ],
+    "name": [
+      {
+        "family": "Doe",
+        "given": [
+          "Jane"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1966-08-13",
+    "address": [
+      {
+        "city": "Marblehead",
+        "state": "Massachusetts"
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "resourceType": "Condition",
+      "id": "1db55074-e61f-4723-a719-490059069c80",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Prediabetes",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "15777000",
+            "display": "Prediabetes"
+          }
+        ]
+      },
+      "onsetDateTime": "2019-08-31T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "f77fcc8b-c15e-4b98-b193-a6f3393a7779",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Non-small cell carcinoma of lung, TNM stage 1 (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "424132000",
+            "display": "Non-small cell carcinoma of lung, TNM stage 1 (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2018-10-10T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "94d290a4-ed55-4711-bcf7-c2bb4fa39405",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Non-small cell lung cancer (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "254637007",
+            "display": "Non-small cell lung cancer (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2018-10-08T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "b60376b2-2cc5-4021-80ce-a2718ac9f19e",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Suspected lung cancer (situation)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "162573006",
+            "display": "Suspected lung cancer (situation)"
+          }
+        ]
+      },
+      "onsetDateTime": "2018-09-29T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "add1f3fd-3f0c-40ed-8e14-da6ddcc3425c",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Hyperglycemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "80394007",
+            "display": "Hyperglycemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2017-08-19T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "2ee6e4e7-dc2f-48d7-a91a-a4a612d95897",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Neuropathy due to type 2 diabetes mellitus (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "368581000119106",
+            "display": "Neuropathy due to type 2 diabetes mellitus (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2016-08-13T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "5a91f9f8-becc-4c18-a9c7-003542d5e841",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Hypertriglyceridemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "302870006",
+            "display": "Hypertriglyceridemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2014-09-06T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "7614032e-33dc-4dec-b72e-b197a4b8ba4f",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Metabolic syndrome X (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "237602007",
+            "display": "Metabolic syndrome X (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2014-09-06T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "9092f886-dc6d-4a00-9ca1-9253dbd3d9de",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Diabetes",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "44054006",
+            "display": "Diabetes"
+          }
+        ]
+      },
+      "onsetDateTime": "2012-09-01T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "29967889-f7e7-4e51-83f2-edaf5eeb57b6",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Anemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "271737000",
+            "display": "Anemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2012-09-01T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "a12c186f-b7df-47e7-b37e-42d90ce870fd",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Hypertension",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "59621000",
+            "display": "Hypertension"
+          }
+        ]
+      },
+      "onsetDateTime": "2012-09-01T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "0ba1a62a-9119-4966-aecb-a1b29879362d",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Viral sinusitis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2010-10-20T16:13:10-04:00",
+      "abatementDateTime": "2010-11-10T15:13:10-05:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "00449661-5db5-4312-b307-0ae34bb8877e",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Body mass index 30+ - obesity (finding)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "162864005",
+            "display": "Body mass index 30+ - obesity (finding)"
+          }
+        ]
+      },
+      "onsetDateTime": "2006-08-19T16:13:10-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "6ed34747-9fe9-41d2-bae2-e93259c7b802",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Miscarriage in first trimester",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "19169002",
+            "display": "Miscarriage in first trimester"
+          }
+        ]
+      },
+      "onsetDateTime": "1991-09-21T16:13:10-04:00",
+      "abatementDateTime": null
+    }
+  ],
+  "medications": [
+    {
+      "resourceType": "MedicationRequest",
+      "id": "87ac50b8-2296-4acf-bfa7-55f05e441be2",
+      "status": "stopped",
+      "medication": {
+        "text": "Cisplatin 50 MG Injection",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1736854",
+            "display": "Cisplatin 50 MG Injection"
+          }
+        ]
+      },
+      "authoredOn": "2019-08-18T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "e8d90a27-d3d0-4c5e-90c7-cefcc7c11874",
+      "status": "stopped",
+      "medication": {
+        "text": "PACLitaxel 100 MG Injection",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "583214",
+            "display": "PACLitaxel 100 MG Injection"
+          }
+        ]
+      },
+      "authoredOn": "2019-08-18T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "e679019a-1bce-4d69-9d9a-4f770f1357ed",
+      "status": "active",
+      "medication": {
+        "text": "24 HR Metformin hydrochloride 500 MG Extended Release Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "860975",
+            "display": "24 HR Metformin hydrochloride 500 MG Extended Release Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2016-08-13T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "300c3e56-7dd5-4e1a-b1ee-82576e4d265e",
+      "status": "stopped",
+      "medication": {
+        "text": "Mirena 52 MG Intrauterine System",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "807283",
+            "display": "Mirena 52 MG Intrauterine System"
+          }
+        ]
+      },
+      "authoredOn": "2014-10-01T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "2069fba5-72d5-4833-bdb9-721cef265997",
+      "status": "stopped",
+      "medication": {
+        "text": "Levora 0.15/30 28 Day Pack",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "748879",
+            "display": "Levora 0.15/30 28 Day Pack"
+          }
+        ]
+      },
+      "authoredOn": "2013-10-06T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "b37c8fe9-e429-487f-933b-5e95e410e490",
+      "status": "stopped",
+      "medication": {
+        "text": "Natazia 28 Day Pack",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "978950",
+            "display": "Natazia 28 Day Pack"
+          }
+        ]
+      },
+      "authoredOn": "2012-10-11T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "087c54e9-5927-4321-b330-4ca4f62f4b5a",
+      "status": "active",
+      "medication": {
+        "text": "Vitamin B 12 5 MG/ML Injectable Solution",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "2001499",
+            "display": "Vitamin B 12 5 MG/ML Injectable Solution"
+          }
+        ]
+      },
+      "authoredOn": "2012-09-01T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "9683227b-8672-47fb-bda8-04dfe12323da",
+      "status": "active",
+      "medication": {
+        "text": "Hydrochlorothiazide 25 MG",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "316049",
+            "display": "Hydrochlorothiazide 25 MG"
+          }
+        ]
+      },
+      "authoredOn": "2012-09-01T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "a080e79e-0719-43b1-89b8-1bf5602fbb49",
+      "status": "stopped",
+      "medication": {
+        "text": "1 ML medroxyprogesterone acetate 150 MG/ML Injection",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1000126",
+            "display": "1 ML medroxyprogesterone acetate 150 MG/ML Injection"
+          }
+        ]
+      },
+      "authoredOn": "2011-10-17T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "0c29b691-f676-4977-9bde-d5d36b05a43f",
+      "status": "stopped",
+      "medication": {
+        "text": "Errin 28 Day Pack",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "831533",
+            "display": "Errin 28 Day Pack"
+          }
+        ]
+      },
+      "authoredOn": "2010-10-22T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "847e6fa3-2656-4916-b47b-c2406e83d289",
+      "status": "stopped",
+      "medication": {
+        "text": "Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "562251",
+            "display": "Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2010-10-20T16:13:10-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "9e9c63a9-60dd-4709-a8db-58166e03d8ca",
+      "status": "stopped",
+      "medication": {
+        "text": "NuvaRing 0.12/0.015 MG per 24HR 21 Day Vaginal Ring",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1367439",
+            "display": "NuvaRing 0.12/0.015 MG per 24HR 21 Day Vaginal Ring"
+          }
+        ]
+      },
+      "authoredOn": "2008-11-01T16:13:10-04:00"
+    }
+  ],
+  "observations": [
+    {
+      "resourceType": "Observation",
+      "id": "3804b2d7-fafc-4af1-966e-abcd0b1481ad",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Height",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8302-2",
+            "display": "Body Height"
+          }
+        ]
+      },
+      "value": "159.9 cm",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "17408aa0-73de-4b40-af81-8f96cb8309b6",
+      "category": "vital-signs",
+      "code": {
+        "text": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "72514-3",
+            "display": "Pain severity - 0-10 verbal numeric rating [Score] - Reported"
+          }
+        ]
+      },
+      "value": "1.7 {score}",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "503e9386-d0f6-42b4-aff8-8cecde94d2fc",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Weight",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "29463-7",
+            "display": "Body Weight"
+          }
+        ]
+      },
+      "value": "74.5 kg",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "64dc2f65-05f3-4196-bd31-5366c6ebade6",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Mass Index",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "39156-5",
+            "display": "Body Mass Index"
+          }
+        ]
+      },
+      "value": "29.1 kg/m2",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "2aeafdff-fe53-4f81-896e-1afc1ca0cf02",
+      "category": "vital-signs",
+      "code": {
+        "text": "Blood Pressure",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "55284-4",
+            "display": "Blood Pressure"
+          }
+        ]
+      },
+      "value": "108/73 mm[Hg]",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "1d819cfc-8bc4-446a-a090-7a0ded064a71",
+      "category": "survey",
+      "code": {
+        "text": "Tobacco smoking status NHIS",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "72166-2",
+            "display": "Tobacco smoking status NHIS"
+          }
+        ]
+      },
+      "value": "Never smoker",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "538bfbdd-009c-4a48-8fab-86920226214b",
+      "category": "laboratory",
+      "code": {
+        "text": "Total Cholesterol",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2093-3",
+            "display": "Total Cholesterol"
+          }
+        ]
+      },
+      "value": "251.7 mg/dL",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "91f26a75-cdaf-4f31-9291-49cbe762eced",
+      "category": "laboratory",
+      "code": {
+        "text": "Triglycerides",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2571-8",
+            "display": "Triglycerides"
+          }
+        ]
+      },
+      "value": "317.7 mg/dL",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "40d77470-5e90-45c7-a9e4-18054d2c1039",
+      "category": "laboratory",
+      "code": {
+        "text": "Low Density Lipoprotein Cholesterol",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "18262-6",
+            "display": "Low Density Lipoprotein Cholesterol"
+          }
+        ]
+      },
+      "value": "154.0 mg/dL",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "66a21049-43a8-4b7c-b9ed-c2c00be9a055",
+      "category": "laboratory",
+      "code": {
+        "text": "High Density Lipoprotein Cholesterol",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2085-9",
+            "display": "High Density Lipoprotein Cholesterol"
+          }
+        ]
+      },
+      "value": "34.2 mg/dL",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "50b2838e-a817-44e6-bf0a-1d2b93f539e9",
+      "category": "laboratory",
+      "code": {
+        "text": "Hemoglobin A1c/Hemoglobin.total in Blood",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "4548-4",
+            "display": "Hemoglobin A1c/Hemoglobin.total in Blood"
+          }
+        ]
+      },
+      "value": "5.8 %",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "b9fe2204-b19f-4aaa-abea-d4646e34ff8d",
+      "category": "laboratory",
+      "code": {
+        "text": "Glucose",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2339-0",
+            "display": "Glucose"
+          }
+        ]
+      },
+      "value": "199.5 mg/dL",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "657b93ed-aef8-46f2-a176-3bb59cbada34",
+      "category": "laboratory",
+      "code": {
+        "text": "Urea Nitrogen",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "6299-2",
+            "display": "Urea Nitrogen"
+          }
+        ]
+      },
+      "value": "16.4 mg/dL",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "3f7b21e8-13b8-4533-a0a1-19436b043d1b",
+      "category": "laboratory",
+      "code": {
+        "text": "Creatinine",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "38483-4",
+            "display": "Creatinine"
+          }
+        ]
+      },
+      "value": "0.8 mg/dL",
+      "effectiveDateTime": "2019-08-31T16:13:10-04:00"
+    }
+  ],
+  "claims": [
+    {
+      "resourceType": "Claim",
+      "id": "e3e4ca02-48b0-457c-9c53-03c5b90b5ff8",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-08-31T16:28:10-04:00",
+      "insurer": "NO_INSURANCE",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "1e70795b-5063-4807-9c84-6afc75cd1f50",
+      "status": "active",
+      "type": "pharmacy",
+      "created": "2019-08-19T18:13:10-04:00",
+      "insurer": "NO_INSURANCE",
+      "total": 491.44
+    },
+    {
+      "resourceType": "Claim",
+      "id": "2c84526a-8d07-4f4e-9b1f-0dd421b86c6a",
+      "status": "active",
+      "type": "pharmacy",
+      "created": "2019-08-19T18:13:10-04:00",
+      "insurer": "NO_INSURANCE",
+      "total": 6511.91
+    },
+    {
+      "resourceType": "Claim",
+      "id": "92b31171-f038-48d1-8ae9-a160a701082f",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-08-19T18:13:10-04:00",
+      "insurer": "NO_INSURANCE",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "5458db26-6c66-4f65-95ea-834f7deb076a",
+      "status": "active",
+      "type": "pharmacy",
+      "created": "2019-07-18T20:13:10-04:00",
+      "insurer": "NO_INSURANCE",
+      "total": 492.83
+    }
+  ],
+  "coverage": {
+    "resourceType": "Coverage",
+    "id": "cov-jane-doe",
+    "status": "none",
+    "payor": "Self-pay (no insurance on file)",
+    "beneficiary": "Patient/jane-doe"
+  },
+  "notes": [],
+  "source": "Synthea (synthetic data, MITRE, Apache-2.0)",
+  "synthea_file": "Angele108_Konopelski743_2c405456-ee6d-475c-b0fe-e8675589845c.json"
+}

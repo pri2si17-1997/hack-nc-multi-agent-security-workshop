@@ -1,0 +1,10 @@
+hacknc_venv
+.git
+.env
+**/__pycache__
+.pytest_cache
+.ruff_cache
+tests
+notebooks
+infra
+data

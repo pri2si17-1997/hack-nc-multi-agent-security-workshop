@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Audit · Admin console{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Audit trail</h1>
+    <p class="lede">Every login, token exchange, approval and policy decision, with who did it,
+      through which agents, and why it was allowed or denied. Each entry contains the hash of the
+      one before it, so changing history breaks the chain.</p>
+  </div>
+</header>
+
+<section class="card verify-card">
+  <div class="card-head">
+    <div>
+      <h2 class="section-label">Integrity</h2>
+      <p class="muted no-margin">Play the rogue admin: run <code>make tamper-audit</code> in a
+        terminal (it flips the latest DENY to ALLOW), then verify again.</p>
+    </div>
+    <button class="btn btn-primary" id="verify" type="button">Verify chain</button>
+  </div>
+  <div id="verify-result" class="verify-result" hidden></div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2 class="section-label">Entries <span class="muted" id="audit-count"></span></h2>
+    <div class="filters">
+      <label>Decision
+        <select id="filter-decision">
+          <option value="">all</option>
+          <option value="allow">allow</option>
+          <option value="deny">deny</option>
+          <option value="info">info</option>
+        </select>
+      </label>
+      <label><input type="checkbox" id="filter-high"> high severity only</label>
+      <label><input type="checkbox" id="filter-attacks"> 🎭 staged attacks only</label>
+      <label><input type="checkbox" id="filter-opa"> include OPA decision log</label>
+      <label><input type="checkbox" id="auto-refresh" checked> auto-refresh</label>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="audit-table">
+      <thead>
+        <tr><th>#</th><th>Time</th><th>Who</th><th>Via</th><th>Action</th><th>Decision</th>
+            <th>Reason</th><th>Hash</th><th></th></tr>
+      </thead>
+      <tbody id="audit-rows"><tr><td colspan="9" class="muted">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+<section class="card">
+  <div class="card-head">
+    <h2 class="section-label">Accounting of disclosures <span class="muted" id="disclosure-total"></span></h2>
+    <span class="muted small">every time patient data left the hospital (HIPAA §164.528)</span>
+  </div>
+  <div class="table-wrap">
+    <table class="audit-table">
+      <thead><tr><th>#</th><th>When</th><th>Patient</th><th>To</th><th>Purpose</th><th>Sent</th><th>Withheld</th><th>By / for</th></tr></thead>
+      <tbody id="disclosure-rows"><tr><td colspan="8" class="muted">Loading…</td></tr></tbody>
+    </table>
+  </div>
+</section>
+
+<section class="card">
+  <div class="card-head">
+    <h2 class="section-label">What the partners say they received</h2>
+    <span class="muted small">their own logs: compare with the hospital's record above</span>
+  </div>
+  <div id="received" class="received-grid"><p class="muted">Loading…</p></div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="{{ static('audit.js') }}" defer></script>{% endblock %}

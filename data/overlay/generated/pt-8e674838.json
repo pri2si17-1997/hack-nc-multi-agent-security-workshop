@@ -1,0 +1,355 @@
+{
+ "_story": "Mel Doyle, 70. Admitted 2026-09-28 with urosepsis (e. coli) (generated from: urosepsis rule).",
+ "encounters": [
+  {
+   "resourceType": "Encounter",
+   "id": "gen-8e67-enc",
+   "status": "in-progress",
+   "class": "inpatient",
+   "reason": "Urosepsis (E. coli)",
+   "period": {
+    "start": "2026-09-28T09:05:00"
+   },
+   "location": "4 West, bed 7",
+   "attending": "Dr. Morgana Pendragon",
+   "dischargePlan": {
+    "readyDate": "2026-10-03",
+    "medications": [
+     {
+      "action": "new",
+      "drug": "trimethoprim-sulfamethoxazole",
+      "dose": "800/160 mg",
+      "quantity": 14,
+      "sig": "1 tablet by mouth twice daily for 7 days",
+      "reason": "complete urosepsis treatment (culture-sensitive)"
+     },
+     {
+      "action": "resume",
+      "drug": "hydrochlorothiazide",
+      "reason": "blood pressure back to normal"
+     }
+    ],
+    "equipment": [],
+    "followUp": {
+     "specialty": "primary care",
+     "within_days": 7,
+     "reason": "Hospital follow-up after urosepsis",
+     "note": "repeat urine test if symptoms return"
+    },
+    "warningSigns": "fever over 38.5 °C, shaking chills, confusion, or pain when passing urine"
+   },
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "conditions": [
+  {
+   "resourceType": "Condition",
+   "id": "gen-8e67-cond-1",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Sepsis due to Escherichia coli",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "A41.51",
+      "display": "Sepsis due to Escherichia coli"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-28",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Condition",
+   "id": "gen-8e67-cond-2",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Urinary tract infection",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "N39.0",
+      "display": "Urinary tract infection"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-28",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medications": [
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-8e67-med-ip1",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Ceftriaxone 1 g IV every 24 hours"
+   },
+   "authoredOn": "2026-09-28",
+   "drugClass": "cephalosporin",
+   "dischargeAction": "switch to oral antibiotic",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-8e67-med-ip2",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Sodium chloride 0.9% IV 100 mL/hour"
+   },
+   "authoredOn": "2026-09-28",
+   "dischargeAction": "stop (hospital only)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medicationHolds": [
+  {
+   "match": "hydrochlorothiazide",
+   "reason": "Held on admission: low blood pressure with sepsis",
+   "resumeIf": {
+    "observation": "systolic",
+    "min": 110
+   }
+  }
+ ],
+ "observations": [
+  {
+   "resourceType": "Observation",
+   "id": "gen-8e67-obs-sbp",
+   "category": "vital-signs",
+   "code": {
+    "text": "Systolic blood pressure",
+    "coding": [
+     {
+      "system": "http://loinc.org",
+      "code": "8480-6"
+     }
+    ]
+   },
+   "value": "123 mm[Hg]",
+   "effectiveDateTime": "2026-10-03T07:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-8e67-obs-lactate",
+   "category": "laboratory",
+   "code": {
+    "text": "Lactate"
+   },
+   "value": "1.5 mmol/L",
+   "effectiveDateTime": "2026-10-03T06:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "normal (3.4 on admission)"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-8e67-obs-wbc",
+   "category": "laboratory",
+   "code": {
+    "text": "White blood cells"
+   },
+   "value": "10.0 10*3/uL",
+   "effectiveDateTime": "2026-10-03T05:30:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-8e67-obs-culture",
+   "category": "laboratory",
+   "code": {
+    "text": "Urine culture",
+    "coding": [
+     {
+      "system": "http://loinc.org",
+      "code": "630-4"
+     }
+    ]
+   },
+   "value": "E. coli >100,000 CFU/mL: sensitive to trimethoprim-sulfamethoxazole and cefpodoxime; resistant to ciprofloxacin",
+   "effectiveDateTime": "2026-10-03T07:30:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "notes": [
+  {
+   "resourceType": "DocumentReference",
+   "id": "gen-8e67-note-progress",
+   "date": "2026-10-03",
+   "type": {
+    "text": "Progress note, hospital day 5"
+   },
+   "author": "Dr. Morgana Pendragon",
+   "text": "Afebrile 48 h, blood pressure normal off fluids, lactate cleared. Urine culture E. coli, sensitive to trimethoprim-sulfamethoxazole. Plan: discharge on oral antibiotic to complete 10 days; restart blood-pressure tablet; family doctor within 7 days.",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "messages": [
+  {
+   "resourceType": "Communication",
+   "id": "gen-8e67-msg-1",
+   "sent": "2026-10-02T20:19:00",
+   "sender": "Mel Doyle (patient portal)",
+   "text": "Hello, this is Mel's daughter (proxy access). Does Dad still need to drink extra water at home, and when does the antibiotic end?",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "allergies": [
+  {
+   "resourceType": "AllergyIntolerance",
+   "id": "gen-8e67-alg-1",
+   "substance": "Sulfamethoxazole (sulfa drugs)",
+   "drugClass": "sulfonamide",
+   "reaction": "Rash",
+   "severity": "moderate",
+   "recorded": "2015-02-19",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "coverage": {
+  "resourceType": "Coverage",
+  "id": "cov-pt-8e674838",
+  "status": "active",
+  "payor": "UnitedHealthcare",
+  "plan": "UnitedHealthcare Choice Plus",
+  "memberId": "UNI-983-2342",
+  "beneficiary": "Patient/pt-8e674838",
+  "meta": {
+   "tag": [
+    {
+     "code": "workshop-overlay"
+    },
+    {
+     "code": "generated-admission"
+    }
+   ]
+  }
+ },
+ "preferences": {
+  "pharmacy": {
+   "partner": "retail-pharmacy",
+   "name": "Main Street Pharmacy",
+   "address": "212 Elm St, Durham, NC"
+  },
+  "primaryCare": {
+   "partner": "pcp-clinic",
+   "name": "Maple Family Medicine",
+   "clinician": "Dr. Alex Lee"
+  },
+  "consent": {
+   "shareSensitiveWithPcp": false,
+   "note": "No sensitive records on file"
+  },
+  "portalAccount": "mel.doyle"
+ }
+}

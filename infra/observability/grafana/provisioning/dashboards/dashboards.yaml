@@ -1,0 +1,10 @@
+# Loads every dashboard JSON in /var/lib/grafana/dashboards.
+# "Security & Audit" (audit logs) and "Discharge story" (traces, one run at a time).
+apiVersion: 1
+
+providers:
+  - name: hacknc
+    folder: HackNC
+    type: file
+    options:
+      path: /var/lib/grafana/dashboards

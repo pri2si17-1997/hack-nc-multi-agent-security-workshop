@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% block title %}Incident report · Admin console{% endblock %}
+{% macro when(at) %}{% if at %}<time datetime="{{ at }}">{{ at[11:19] }}</time>{% else %}—{% endif %}{% endmacro %}
+{% macro seq(n, altered=false) %}<span class="seq{% if altered %} seq-altered{% endif %}" title="audit entry #{{ n }}">#{{ n }}</span>{% if altered %} <span class="tag tag-deny">altered</span>{% endif %}{% endmacro %}
+{% macro verdict(decision) %}<span class="verdict verdict-{{ 'deny' if decision == 'deny' else ('ok' if decision == 'allow' else 'info') }}">{{ decision|upper }}</span>{% endmacro %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Incident report</h1>
+    <p class="lede">What humans and AI agents did with one patient's data, generated only from
+      the hash-chained audit trail and the partners' own logs. No agent is asked what it did.</p>
+  </div>
+  <form class="actions incident-controls no-print" method="get" action="/admin/incident" id="incident-form">
+    <label>Patient
+      <select name="patient">
+        {% set ids = patients|map(attribute='id')|list %}
+        {% if patient_id not in ids %}<option value="{{ patient_id }}" selected>{{ patient_id }}</option>{% endif %}
+        {% for p in patients %}<option value="{{ p.id }}" {% if p.id == patient_id %}selected{% endif %}>{{ p.id }} ({{ p.entries }})</option>{% endfor %}
+      </select>
+    </label>
+    <label>Period
+      <select name="period">
+        <option value="reset" {% if period_choice == 'reset' %}selected{% endif %}>Since the last demo reset</option>
+        <option value="all" {% if period_choice == 'all' %}selected{% endif %}>Entire audit trail</option>
+      </select>
+    </label>
+    <button class="btn btn-ghost" type="submit">Refresh</button>
+    <button class="btn btn-primary" type="button" id="print-report">Print</button>
+  </form>
+</header>
+
+{% if error %}
+<div class="alert alert-deny">✕ {{ error }}</div>
+{% else %}
+{% set r = report %}
+{% set integrity = r.integrity %}
+
+<section class="integrity-banner {{ 'intact' if integrity.ok else ('broken' if integrity.ok is false else 'unknown') }}" id="integrity">
+  {% if integrity.ok %}
+  <strong>✓ Record verified</strong>
+  <span>{{ integrity.checked }} entries checked, chain intact · newest hash <code>{{ integrity.head }}…</code></span>
+  {% elif integrity.ok is false %}
+  <strong>✕ Record altered at entry #{{ integrity.broken_at }}</strong>
+  <span>{{ integrity.problem }}{% if integrity.in_report %} · that entry is part of this report (marked below){% else %} · outside this report's entries{% endif %}.
+    This report can no longer be trusted as written: someone edited the audit database.</span>
+  {% else %}
+  <strong>? Record not verified</strong><span>{{ integrity.problem }}</span>
+  {% endif %}
+</section>
+
+<section class="card incident-meta">
+  <div>
+    <h2 class="section-label">Patient</h2>
+    <p class="big-id">{{ r.patient_id }}</p>
+  </div>
+  <div>
+    <h2 class="section-label">Period</h2>
+    <p class="no-margin">{% if r.period.since_seq %}Since {{ seq(r.period.since_seq) }} at {{ when(r.period.since_at) }} <span class="muted small">({{ r.period.since_what }})</span>{% else %}Entire audit trail{% endif %}</p>
+    <p class="muted small no-margin">{{ r.period.entries }} entries about this patient · {{ when(r.period.first_at) }} → {{ when(r.period.last_at) }}</p>
+  </div>
+  <ul class="stat-row">
+    <li><b>{{ r.headline.people }}</b><span>people</span></li>
+    <li><b>{{ r.headline.agents }}</b><span>agents</span></li>
+    <li><b>{{ r.headline.records_read }}</b><span>records read</span></li>
+    <li><b>{{ r.headline.withheld }}</b><span>withheld</span></li>
+    <li><b>{{ r.headline.sent }}</b><span>sent outside</span></li>
+    <li class="{{ 'stat-alarm' if r.headline.stopped }}"><b>{{ r.headline.stopped }}</b><span>stopped</span></li>
+  </ul>
+</section>
+
+{% if not r.period.entries %}
+<div class="alert">Nothing about {{ r.patient_id }} in this period yet. Run the night first, or choose <em>Entire audit trail</em>.</div>
+{% endif %}
+
+<!-- 1 ------------------------------------------------------------------ who -->
+<section class="card question" id="q-who">
+  <h2><span class="q-num">1</span> Who acted?</h2>
+  <p class="muted small">Every person and every agent, in the order they first appear. An agent always acts for a person.</p>
+  <div class="table-wrap">
+    <table class="audit-table">
+      <thead><tr><th>Who</th><th>For</th><th>What they did</th><th>From → to</th><th>Refused</th></tr></thead>
+      <tbody>
+        {% for w in r.who %}
+        <tr class="{{ 'sev-warning' if w.blocked }}">
+          <td><span class="tag tag-{{ w.kind }}">{{ '🤖 agent' if w.kind == 'agent' else (w.role or 'person') }}</span> <strong>{{ w.label }}</strong>{% if w.kind == 'agent' %} <code class="muted small">{{ w.name }}</code>{% endif %}</td>
+          <td>{{ w['for']|join(', ') or ('—' if w.kind == 'agent' else 'acted directly' ~ (', and through agents ×' ~ w.through_agents if w.through_agents else '')) }}</td>
+          <td class="reason-cell">{% for d in w.did %}{{ d.what }} ×{{ d.count }}{% if not loop.last %} · {% endif %}{% endfor %}</td>
+          <td class="nowrap">{{ when(w.first_at) }} → {{ when(w.last_at) }}</td>
+          <td>{% if w.blocked %}<span class="deny-text">✕ {{ w.blocked }}</span>{% else %}—{% endif %}</td>
+        </tr>
+        {% else %}<tr><td colspan="5" class="muted">No one.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 2 ------------------------------------------------------------------ authority -->
+<section class="card question" id="q-authority">
+  <h2><span class="q-num">2</span> On whose authority?</h2>
+  <p class="muted small">The person behind every action, the chain of agents their token was exchanged through, the scopes the gateways saw, and the policy that decided.</p>
+  <div class="table-wrap">
+    <table class="audit-table">
+      <thead><tr><th>Acting</th><th>For</th><th>Agent chain</th><th>Token scopes</th><th>Policy</th><th>Actions</th></tr></thead>
+      <tbody>
+        {% for a in r.authority %}
+        <tr class="{{ 'sev-warning' if a.denied }}">
+          <td><strong>{{ a.actor_label }}</strong>{% if a.direct %} <span class="muted small">(the person, directly)</span>{% endif %}</td>
+          <td>{{ a['for'] }}{% if a.role %} <span class="role role-{{ a.role }}">{{ a.role }}</span>{% endif %}</td>
+          <td class="chain-cell">{% for c in a.chains %}<div>{{ c }}</div>{% endfor %}</td>
+          <td>{% for s in a.scopes %}<code class="scope">{{ s }}</code> {% else %}<span class="muted">—</span>{% endfor %}</td>
+          <td class="small">{% for p in a.policies %}<div><code>{{ p }}</code></div>{% else %}<span class="muted">—</span>{% endfor %}</td>
+          <td class="nowrap">{{ a.actions }}{% if a.denied %} <span class="deny-text">· {{ a.denied }} refused</span>{% endif %}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 3 ------------------------------------------------------------------ seen -->
+<section class="card question" id="q-seen">
+  <h2><span class="q-num">3</span> What did they see?</h2>
+  <p class="muted small">Every read went through the EHR gateway; these are its own records of what it returned and what it held back.</p>
+  <div class="table-wrap">
+    <table class="audit-table">
+      <thead><tr><th>Reader</th><th>For</th><th>Tools</th><th>Calls</th><th>Records returned</th></tr></thead>
+      <tbody>
+        {% for x in r.seen.reads %}
+        <tr>
+          <td><strong>{{ x.actor_label }}</strong></td>
+          <td>{{ x['for'] }}</td>
+          <td class="reason-cell">{% for t in x.tools %}<code>{{ t.tool }}</code> ×{{ t.count }}{% if not loop.last %} · {% endif %}{% endfor %}</td>
+          <td>{{ x.calls }}</td>
+          <td>{{ x.returned }}</td>
+        </tr>
+        {% else %}<tr><td colspan="5" class="muted">No reads.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div class="split">
+    <div>
+      <h3 class="section-label">Withheld by policy</h3>
+      {% for w in r.seen.withheld %}
+      <p class="small">{{ seq(w.seq, w.altered) }} {{ when(w.at) }} · {{ w.actor_label }} for {{ w.who }} · <code>{{ w.tool }}</code>: {{ w.ids|join(', ') }}<br><span class="muted">{{ w.reason }}</span></p>
+      {% else %}<p class="muted small">Nothing was withheld from anyone in this period.</p>{% endfor %}
+    </div>
+    <div>
+      <h3 class="section-label">Emergency access (break-the-glass)</h3>
+      {% for b in r.seen.emergency %}
+      <p class="small warn-text">{{ seq(b.seq, b.altered) }} {{ when(b.at) }} · {{ b.who }} {{ b.what }}: {{ b.reason }}</p>
+      {% else %}<p class="muted small">None.</p>{% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 4 ------------------------------------------------------------------ left -->
+<section class="card question" id="q-left">
+  <h2><span class="q-num">4</span> What left the hospital?</h2>
+  <p class="muted small">Every disclosure the gateway recorded, next to what the partner says it received (its own log).{% if not r.partners_ok %} <span class="deny-text">The partners' logs could not be read.</span>{% endif %}</p>
+  <div class="table-wrap">
+    <table class="audit-table">
+      <thead><tr><th>#</th><th>When</th><th>To</th><th>Purpose</th><th>Sent</th><th>Withheld</th><th>By / for</th><th>Partner's log</th></tr></thead>
+      <tbody>
+        {% for d in r.left %}
+        <tr class="{{ 'sev-warning' if d.decision != 'allow' or d.during_suspended_task }}">
+          <td class="num">{{ seq(d.seq) }}</td>
+          <td class="nowrap">{{ when(d.at) }}</td>
+          <td>{{ d.destination }}</td>
+          <td>{{ d.purpose }}</td>
+          <td class="reason-cell">{% if d.decision == 'allow' %}{{ d.fields|join(', ') }}{% else %}⛔ {{ d.reason }}{% endif %}
+            {% if d.payload %}<details><summary class="small">payload that left</summary><pre class="received-body">{{ d.payload|tojson(indent=2) }}</pre></details>{% endif %}
+            {% if d.during_suspended_task %}<div class="warn-text small">⚠ sent by an agent whose task was suspended afterwards (the gateway still checked it)</div>{% endif %}</td>
+          <td class="{{ 'warn-text' if d.withheld }}">{{ d.withheld|join(', ') or '—' }}</td>
+          <td class="chain-cell">{{ (d.chain or [d.agent])|join(' → ') }} · for {{ d['for'] }}</td>
+          <td>{% if d.agrees %}<span class="ok-text">✓ agrees</span>{% elif d.agrees is false %}<span class="deny-text">✕ differs: {{ d.receipt.fields|join(', ') }}</span>{% elif d.decision == 'allow' %}<span class="muted">no receipt</span>{% else %}—{% endif %}</td>
+        </tr>
+        {% else %}<tr><td colspan="8" class="muted">Nothing about this patient left the hospital.</td></tr>{% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 5 ------------------------------------------------------------------ stopped -->
+<section class="card question" id="q-stopped">
+  <h2><span class="q-num">5</span> What was stopped?</h2>
+  {% for b in r.stopped.blocked %}
+  <div class="stopped-card {{ 'inconsistent' if not b.consistent }}">
+    <h3>🚨 🤖 {{ b.agent_label }} reached for {% if b.other_patient and b.other_patient != r.patient_id %}another patient's record (<code>{{ b.other_patient }}</code>){% else %}something outside its job{% endif %}{% if b.attempted_tool %}: <code>{{ b.attempted_tool }}</code>{% endif %}</h3>
+    <dl class="stopped-facts">
+      <dt>The attempt</dt>
+      <dd>{% if b.attempt %}{{ seq(b.attempt.seq, b.attempt.altered) }} {{ when(b.attempt.at) }} · EHR gateway recorded {{ verdict(b.attempt.decision) }} · {{ b.attempt.reason }}{% else %}<span class="deny-text">✕ The gateway's entry is missing from the trail.</span>{% endif %}
+        {% if not b.consistent %}<div class="deny-text"><strong>✕ This does not add up:</strong> the alert below says the gateway blocked it, {% if b.witness %}and OPA's own decision log says DENY, {% endif %}but the gateway's entry {{ 'is gone' if b.missing else 'now says ' ~ b.attempt.decision|upper }}.</div>{% endif %}</dd>
+      <dt>Independent witness</dt>
+      <dd>{% if b.witness %}{{ seq(b.witness.seq) }} OPA decision log (written by OPA, not the gateway): {{ verdict(b.witness.decision) }} · {{ b.witness.reason }}{% else %}<span class="muted">No OPA decision log entry found (it arrives a few seconds late).</span>{% endif %}</dd>
+      <dt>Contained</dt>
+      <dd>{{ seq(b.alert.seq, b.alert.altered) }} {{ when(b.alert.at) }} · discharge coordinator: {{ b.alert.reason }}</dd>
+      <dt>Reviewed</dt>
+      <dd>{% if b.review %}{{ seq(b.review.seq, b.review.altered) }} {{ when(b.review.at) }} · <strong>{{ b.review.who }}</strong>{% if b.review.role %} ({{ b.review.role }}){% endif %}: {{ b.review.reason }}{% else %}<span class="warn-text">Not reviewed yet: the discharge is on hold.</span>{% endif %}</dd>
+    </dl>
+  </div>
+  {% endfor %}
+  {% if r.stopped.refused %}
+  <h3 class="section-label">Other refusals</h3>
+  <div class="table-wrap">
+    <table class="audit-table">
+      <thead><tr><th>#</th><th>When</th><th>Who</th><th>Via</th><th>What</th><th>Why</th></tr></thead>
+      <tbody>
+        {% for x in r.stopped.refused %}
+        <tr class="sev-warning">
+          <td class="num">{{ seq(x.seq, x.altered) }}</td><td class="nowrap">{{ when(x.at) }}</td>
+          <td>{{ x.who or '—' }}</td><td class="chain-cell">{{ x.chain|join(' → ') }}</td>
+          <td><code>{{ x.action }}</code></td><td class="reason-cell">{{ x.reason }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+  {% if r.stopped.flagged %}
+  <h3 class="section-label">Flagged, not followed</h3>
+  {% for f in r.stopped.flagged %}
+  <p class="small">{{ seq(f.seq, f.altered) }} {{ when(f.at) }} · {{ f.actor_label }} for {{ f.who }}: <span class="warn-text">{{ f.reason }}</span></p>
+  {% endfor %}
+  {% endif %}
+  {% if not (r.stopped.blocked or r.stopped.refused or r.stopped.flagged) %}<p class="muted">Nothing was stopped or flagged in this period.</p>{% endif %}
+</section>
+
+<section class="card">
+  <details class="timeline" open>
+    <summary><h2 class="section-label inline">Timeline: key events in order <span class="muted">({{ r.timeline|length }})</span></h2></summary>
+    <div class="table-wrap">
+      <table class="audit-table">
+        <thead><tr><th>#</th><th>When</th><th>Who</th><th>Via</th><th>What</th><th>Decision</th><th>Reason</th></tr></thead>
+        <tbody>
+          {% for t in r.timeline %}
+          <tr class="sev-{{ t.severity }}{% if t.altered %} row-altered{% endif %}">
+            <td class="num">{{ seq(t.seq, t.altered) }}</td><td class="nowrap">{{ when(t.at) }}</td>
+            <td>{{ t.who or '—' }}</td><td class="chain-cell">{{ t.chain|join(' → ') }}</td>
+            <td>{{ t.what }}</td><td>{{ verdict(t.decision) }}</td><td class="reason-cell">{{ t.reason }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </details>
+  {% if r.system %}
+  <h3 class="section-label">System changes in the period</h3>
+  {% for s in r.system %}<p class="small no-margin">{{ seq(s.seq, s.altered) }} {{ when(s.at) }} · {{ s.who }}: {{ s.reason }}</p>{% endfor %}
+  {% endif %}
+</section>
+
+<p class="muted small report-footer">Generated by {{ user.username }} from the audit service (<code>/events</code>, <code>/verify</code>) and the partners' logs. Reload after <code>make cover-up</code> to see what an insider's edit does to it.</p>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script src="{{ static('incident.js') }}" defer></script>{% endblock %}

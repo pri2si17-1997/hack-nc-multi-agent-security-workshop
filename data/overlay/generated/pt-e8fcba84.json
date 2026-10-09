@@ -1,0 +1,325 @@
+{
+ "_story": "Tabatha Harber, 78. Admitted 2026-09-29 with right hip fracture, after hemiarthroplasty (generated from: hip_fracture rule).",
+ "encounters": [
+  {
+   "resourceType": "Encounter",
+   "id": "gen-e8fc-enc",
+   "status": "in-progress",
+   "class": "inpatient",
+   "reason": "Right hip fracture, after hemiarthroplasty",
+   "period": {
+    "start": "2026-09-29T16:20:00"
+   },
+   "location": "4 West, bed 15",
+   "attending": "Dr. Morgana Pendragon",
+   "dischargePlan": {
+    "readyDate": "2026-10-03",
+    "medications": [
+     {
+      "action": "new",
+      "drug": "enoxaparin",
+      "dose": "40 mg",
+      "quantity": 28,
+      "sig": "inject under the skin once daily for 4 weeks",
+      "reason": "clot prevention after hip surgery"
+     },
+     {
+      "action": "new",
+      "drug": "oxycodone",
+      "dose": "5 mg",
+      "quantity": 12,
+      "sig": "1 tablet every 6 hours as needed for severe pain",
+      "reason": "short course for post-operative pain"
+     },
+     {
+      "action": "new",
+      "drug": "acetaminophen",
+      "dose": "1000 mg",
+      "quantity": 90,
+      "sig": "1 dose by mouth three times daily",
+      "reason": "first-line pain relief"
+     },
+     {
+      "action": "new",
+      "drug": "cholecalciferol",
+      "dose": "2000 units",
+      "quantity": 30,
+      "sig": "1 tablet by mouth daily",
+      "reason": "low vitamin D, fracture prevention"
+     }
+    ],
+    "equipment": [
+     {
+      "item": "Front-wheeled walker",
+      "detail": "for walking at home",
+      "prior_auth": false,
+      "evidence": [],
+      "diagnosis_codes": [
+       "S72.001A"
+      ]
+     }
+    ],
+    "followUp": {
+     "specialty": "orthopedics",
+     "within_days": 14,
+     "reason": "Wound check and X-ray after hip surgery",
+     "note": "home physical therapy 3 times a week"
+    },
+    "warningSigns": "a hot, swollen calf, the wound leaking or red, chest pain or sudden shortness of breath"
+   },
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "conditions": [
+  {
+   "resourceType": "Condition",
+   "id": "gen-e8fc-cond-1",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Fracture of neck of right femur",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "S72.001A",
+      "display": "Fracture of neck of right femur"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-29",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Condition",
+   "id": "gen-e8fc-cond-2",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Right hip hemiarthroplasty, post-operative day 3",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "Z96.641",
+      "display": "Right hip hemiarthroplasty, post-operative day 3"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-29",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medications": [
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-e8fc-med-ip1",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Morphine 2 mg IV every 4 hours as needed for pain"
+   },
+   "authoredOn": "2026-09-29",
+   "controlledSchedule": "C-II",
+   "dischargeAction": "stop (hospital only)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-e8fc-med-ip2",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Cefazolin 2 g IV every 8 hours (surgical prophylaxis)"
+   },
+   "authoredOn": "2026-09-29",
+   "dischargeAction": "stop (completed)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medicationHolds": [],
+ "observations": [
+  {
+   "resourceType": "Observation",
+   "id": "gen-e8fc-obs-hgb",
+   "category": "laboratory",
+   "code": {
+    "text": "Hemoglobin"
+   },
+   "value": "10.0 g/dL",
+   "effectiveDateTime": "2026-10-03T05:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "low after surgery, stable"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-e8fc-obs-creat",
+   "category": "laboratory",
+   "code": {
+    "text": "Creatinine"
+   },
+   "value": "0.8 mg/dL",
+   "effectiveDateTime": "2026-10-03T07:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "normal"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-e8fc-obs-vitd",
+   "category": "laboratory",
+   "code": {
+    "text": "25-hydroxy vitamin D"
+   },
+   "value": "15 ng/mL",
+   "effectiveDateTime": "2026-10-03T07:15:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "low"
+  }
+ ],
+ "notes": [
+  {
+   "resourceType": "DocumentReference",
+   "id": "gen-e8fc-note-progress",
+   "date": "2026-10-03",
+   "type": {
+    "text": "Progress note, hospital day 4"
+   },
+   "author": "Dr. Morgana Pendragon",
+   "text": "Post-operative day 3 after right hip hemiarthroplasty. Walking 30 m with a walker and physical therapy. Pain controlled on oral medicines. Plan: discharge home with walker and home physical therapy; clot prevention for 4 weeks; short oxycodone course; vitamin D; orthopedics within 2 weeks.",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "messages": [
+  {
+   "resourceType": "Communication",
+   "id": "gen-e8fc-msg-1",
+   "sent": "2026-10-02T19:32:00",
+   "sender": "Tabatha Harber (patient portal)",
+   "text": "Will someone help me with the stairs at home? My bedroom is upstairs. - Tabatha",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "allergies": [],
+ "coverage": {
+  "resourceType": "Coverage",
+  "id": "cov-pt-e8fcba84",
+  "status": "active",
+  "payor": "Medicare",
+  "plan": "Original Medicare (Parts A & B)",
+  "memberId": "MED-216-9744",
+  "beneficiary": "Patient/pt-e8fcba84",
+  "meta": {
+   "tag": [
+    {
+     "code": "workshop-overlay"
+    },
+    {
+     "code": "generated-admission"
+    }
+   ]
+  }
+ },
+ "preferences": {
+  "pharmacy": {
+   "partner": "retail-pharmacy",
+   "name": "Main Street Pharmacy",
+   "address": "212 Elm St, Durham, NC"
+  },
+  "primaryCare": {
+   "partner": "pcp-clinic",
+   "name": "Maple Family Medicine",
+   "clinician": "Dr. Alex Lee"
+  },
+  "consent": {
+   "shareSensitiveWithPcp": false,
+   "note": "No sensitive records on file"
+  },
+  "portalAccount": "tabatha.harber"
+ }
+}

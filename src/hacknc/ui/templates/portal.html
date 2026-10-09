@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}My health · HackNC General Hospital{% endblock %}
+{% block body_class %}page-portal{% endblock %}
+{% block content %}
+{% if error %}<div class="alert alert-deny">{{ error }}</div>{% endif %}
+{% if data %}
+<header class="page-head">
+  <div>
+    <h1>Hi {{ data.patient.name.split()[0] }}</h1>
+    <p class="lede">{% if data.patient.admission %}You are on {{ data.patient.admission.location }} since {{ data.patient.admission.since }}.{% endif %}
+      Your care team is Dr. Morgana Pendragon's team. Messages are read by the care team; an assistant sorts them first.</p>
+  </div>
+</header>
+
+<div class="portal-grid">
+  <section class="card">
+    <h2 class="section-label">Message your care team</h2>
+    <form id="portal-form" class="portal-form">
+      <textarea id="portal-message" rows="4" placeholder="Ask a question, request a refill or a change, or tell us about a side effect…" aria-label="Your message"></textarea>
+      <div class="suggestions">
+        <button type="button" class="chip-btn" data-say="Can I get a refill of my oxycodone? I only have two tablets left.">Refill</button>
+        <button type="button" class="chip-btn" data-say="The pain is worse at night. Please raise my oxycodone to 10 mg.">Raise a dose</button>
+        <button type="button" class="chip-btn" data-say="Since yesterday the metformin makes me dizzy.">Side effect</button>
+      </div>
+      <button class="btn btn-primary" type="submit">Send</button>
+    </form>
+    <div class="portal-reply" id="portal-reply" aria-live="polite" hidden></div>
+    <p class="muted small">For anything urgent, call the ward or 911. Nothing about your treatment changes until a doctor decides.</p>
+  </section>
+
+  <section class="card">
+    <h2 class="section-label">My requests</h2>
+    <ol class="portal-requests" id="portal-requests"></ol>
+  </section>
+
+  <section class="card">
+    <h2 class="section-label">My medicines</h2>
+    <ul class="chart-list" id="portal-meds">
+      {% for m in data.medications %}
+      <li><span>{{ m.medication.text }}</span>{% if m.status == 'on-hold' %} <span class="chip chip-warn">on hold in hospital</span>{% endif %}{% if m.controlledSchedule %} <span class="chip">controlled</span>{% endif %}</li>
+      {% else %}<li class="muted">No medicines on file.</li>{% endfor %}
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="section-label">Who may see my sensitive records</h2>
+    <label class="consent-row">
+      <span class="switch"><input type="checkbox" id="consent" {% if data.consent.shareSensitiveWithPcp %}checked{% endif %}><span></span></span>
+      <span>Share my psychiatry records with my family doctor (Maple Family Medicine)</span>
+    </label>
+    <p class="muted small" id="consent-note">{{ data.consent.note }}</p>
+    <p class="muted small">This is your choice. The hospital's disclosure gateway checks it every time anything is sent to your family doctor.</p>
+  </section>
+</div>
+{% endif %}
+{% endblock %}
+{% block scripts %}<script>window.PORTAL_REQUESTS = {{ (data.requests if data else []) | tojson }};</script><script src="{{ static('portal.js') }}" defer></script>{% endblock %}

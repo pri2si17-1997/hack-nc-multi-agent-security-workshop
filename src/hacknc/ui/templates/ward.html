@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}4 West · HackNC General Hospital{% endblock %}
+{% block body_class %}page-ward{% endblock %}
+{% block main_class %}content-ward{% endblock %}
+{% block content %}
+<div class="ward" data-selected="{{ selected.id if selected else '' }}" data-user="{{ user.name }}" data-role="{{ user.role }}">
+
+  <!-- Left: the ward list. Selecting a patient sets the chat's patient. -->
+  <aside class="card ward-col" aria-label="Ward">
+    <h2 class="section-label">4 West <span class="muted" id="ward-count">({{ patients | length }})</span></h2>
+    {% if error %}<div class="alert alert-deny">{{ error }}</div>{% endif %}
+    <ol class="ward-list" id="ward-list">
+      {% for p in patients %}
+      <li>
+        <button type="button" class="ward-patient{% if selected and p.id == selected.id %} selected{% endif %}" data-patient="{{ p.id }}"
+                data-name="{{ p.name }}" data-bed="{{ p.admission.location }}" data-reason="{{ p.admission.reason }}"
+                data-age="{{ p.age }}" data-gender="{{ p.gender }}">
+          <span class="ward-dot dot-{{ p.discharge.state }}" aria-hidden="true"></span>
+          <span class="ward-name">{{ p.name }}</span>
+          <span class="ward-bed">{{ p.admission.location.rsplit(' ', 1)[-1] }}</span>
+          <span class="ward-reason">{{ p.admission.reason }}</span>
+          <span class="ward-status" data-status>{{ p.discharge.label }}</span>
+          {% if p.open_requests %}<span class="ward-requests" title="Requests from the patient portal">📨 {{ p.open_requests }}</span>{% endif %}
+        </button>
+      </li>
+      {% endfor %}
+    </ol>
+  </aside>
+
+  <!-- Middle: talk to the discharge coordinator about the selected patient. -->
+  <section class="card chat-col" aria-label="Chat">
+    <header class="chat-head">
+      <div>
+        <h1 id="patient-name">{{ selected.name if selected else 'No patient selected' }}</h1>
+        <p class="muted small no-margin" id="patient-facts">{% if selected %}{{ selected.age }} y · {{ selected.gender }} · {{ selected.admission.location }} · {{ selected.admission.reason }}{% endif %}</p>
+      </div>
+      <div class="chat-actions">
+        <span class="status-pill" id="discharge-status"></span>
+        <button class="btn btn-ghost btn-sm" id="reopen" type="button" hidden title="Cancel unsigned drafts and start over">Reopen</button>
+        <button class="btn btn-secondary btn-sm" id="open-chart" type="button">Chart</button>
+      </div>
+    </header>
+    <div class="messages" id="messages" aria-live="polite"></div>
+    <div class="suggestions" id="suggestions">
+      <button type="button" class="chip-btn" data-say="Summarize {first}">Summarize</button>
+      <button type="button" class="chip-btn" data-say="What are {first}'s allergies?">Allergies?</button>
+      <button type="button" class="chip-btn" data-say="Discharge {name}">Discharge {first}</button>
+      <button type="button" class="chip-btn" data-say="What's still open?">What's left?</button>
+    </div>
+    <form id="chat-form" class="ask-form">
+      <input id="chat-input" type="text" placeholder="Ask or instruct… e.g. “Discharge Jane Doe”" autocomplete="off" aria-label="Message to the discharge coordinator">
+      <button class="btn btn-primary" type="submit">Send</button>
+    </form>
+  </section>
+
+  <!-- Right: what happened behind the scenes, live. -->
+  <section class="card activity-col" aria-label="Activity">
+    <header class="activity-head">
+      <div class="tabs" role="tablist">
+        <button type="button" role="tab" class="active" data-view="map">Map</button>
+        <button type="button" role="tab" data-view="feed">Feed</button>
+      </div>
+      <div class="xray-controls">
+        <label class="mode-toggle" title="Reveal one step at a time"><input type="checkbox" id="step-mode"> Step mode</label>
+        <button class="btn btn-secondary btn-sm" id="next-step" type="button" hidden>Next ▸</button>
+        <button class="btn btn-ghost btn-sm" id="next-agent" type="button" hidden title="Reveal up to the next agent">Next agent ⏭</button>
+      </div>
+    </header>
+    <p class="muted small no-margin" id="activity-label">Send a message to watch the agents work.</p>
+    <div class="activity-view" data-view="map">
+      <svg class="live-map" id="live-map" viewBox="0 0 460 450" role="img" aria-label="Live map of agents, gateways and partners"></svg>
+      <p class="map-caption" id="map-caption" aria-live="polite"></p>
+      <div class="pillar-legend">
+        <span class="pill pillar-privilege">🔑 Privilege</span>
+        <span class="pill pillar-trust">🛡 Trust</span>
+        <span class="pill pillar-accountability">📝 Accountability</span>
+        <span class="pill pillar-agent">🤖 Agents</span>
+      </div>
+    </div>
+    <div class="activity-view" data-view="feed" hidden>
+      <div class="feed" id="feed"></div>
+    </div>
+    <p class="muted small no-margin" id="steps-status"></p>
+  </section>
+</div>
+
+<!-- The chart opens as a drawer over the ward, not as a separate page. -->
+<div class="drawer-backdrop" id="drawer-backdrop" hidden></div>
+<aside class="drawer" id="chart-drawer" aria-label="Chart" hidden><div id="drawer-body"></div></aside>
+{% endblock %}
+{% block scripts %}<script src="{{ static('activity.js') }}" defer></script><script src="{{ static('ward.js') }}" defer></script>{% endblock %}
