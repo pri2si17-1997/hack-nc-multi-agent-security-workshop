@@ -184,6 +184,8 @@ def test_break_glass_grant_is_high_severity(env) -> None:
 def test_admin_flags_need_the_key_and_merge(env) -> None:
     client, *_ = env
     assert client.get("/admin/flags").status_code == 401
+    assert client.get("/flags").json()["agent.medrec-agent"] is True   # read-only: no key
+    assert client.put("/flags", json={"ai.model": False}).status_code == 405
     assert client.put("/admin/flags", json={"break_glass_enabled": True},
                       headers={"X-Demo-Admin-Key": "wrong"}).status_code == 401
     admin = {"X-Demo-Admin-Key": "admin-key"}

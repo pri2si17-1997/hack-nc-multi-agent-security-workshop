@@ -6,6 +6,7 @@
     POST /requests/{id}/consume    act on a signature      (disclosure gateway; content must match)
     POST /break-glass              emergency access grant  (clinician, if enabled)
     GET  /break-glass/grants       active grants
+    GET  /flags                    demo switches, read-only (any service: they aren't secret)
     GET/PUT /admin/flags           demo switches           (X-Demo-Admin-Key header)
                                    (see hacknc.common.flags; turning break-the-glass off
                                     revokes active grants)
@@ -250,6 +251,12 @@ def create_app(
     @app.get("/break-glass/grants")
     def grants(patient_id: str | None = None, claims: TokenClaims = Depends(auth)) -> dict:
         return {"grants": store.active_grants(clock(), patient_id=patient_id)}
+
+    @app.get("/flags")
+    def read_flags() -> dict[str, bool]:
+        """Read-only, no key: agents and gateways only need to know which switches are on.
+        Changing them stays admin-only, so no agent holds the admin key."""
+        return dict(settings.flags)
 
     @app.get("/admin/flags")
     def get_flags(x_demo_admin_key: str | None = Header(default=None)) -> dict[str, bool]:

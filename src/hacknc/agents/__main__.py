@@ -26,7 +26,7 @@ def main() -> None:
     setup_tracing(name, settings.otel_exporter_otlp_endpoint)
     kc = KeycloakClient(settings.keycloak_url)
     approvals = ApprovalApi(os.environ.get("APPROVAL_URL", "http://approval-service:8007"))
-    flags = remote_flags(approvals, os.environ.get("DEMO_ADMIN_KEY", ""))
+    flags = remote_flags(approvals)
     deps = AgentDeps(
         keycloak=kc,
         secrets=client_secret,

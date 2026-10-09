@@ -76,7 +76,7 @@ def main() -> None:
         secrets=client_secret,
         partners=PartnerApi(os.environ.get("PARTNERS_URL", "http://partners:8020")),
         approvals=approvals,
-        flags=remote_flags(approvals, os.environ.get("DEMO_ADMIN_KEY", "")),
+        flags=remote_flags(approvals),
         audit=AuditClient(
             os.environ.get("AUDIT_URL", "http://audit-service:8006"),
             ServiceTokenProvider(kc, SERVER_NAME, client_secret(SERVER_NAME), "audit-service",

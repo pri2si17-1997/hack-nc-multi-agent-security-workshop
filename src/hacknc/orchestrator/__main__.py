@@ -27,7 +27,7 @@ def main() -> None:
     kc = KeycloakClient(settings.keycloak_url)
     admin_key = os.environ.get("DEMO_ADMIN_KEY", "")
     approvals = ApprovalApi(os.environ.get("APPROVAL_URL", "http://approval-service:8007"))
-    flags = remote_flags(approvals, admin_key)
+    flags = remote_flags(approvals)
     ehr_url = os.environ.get("EHR_MCP_URL", "http://ehr-mcp:8010/mcp")
     audit_url = os.environ.get("AUDIT_URL", "http://audit-service:8006")
     deps = OrchestratorDeps(

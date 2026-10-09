@@ -41,7 +41,7 @@ def build_server() -> EhrMcpServer:
         keycloak=kc,
         secrets=client_secret,
         approvals=approvals,
-        flags=remote_flags(approvals, os.environ.get("DEMO_ADMIN_KEY", "")),
+        flags=remote_flags(approvals),
         audit=AuditClient(
             os.environ.get("AUDIT_URL", "http://audit-service:8006"),
             ServiceTokenProvider(kc, SERVER_NAME, client_secret(SERVER_NAME), "audit-service",
