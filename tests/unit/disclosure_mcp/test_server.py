@@ -217,3 +217,17 @@ async def test_policy_hears_the_agents_task_binding(env) -> None:
     sent = deps.opa.inputs[-1]
     assert sent["patient_id"] == "pt-87c46349"
     assert sent["assignment"] == {"bound": True, "patients": ["jane-doe"]}
+
+
+@pytest.mark.anyio
+async def test_eligibility_strips_what_an_agent_attaches(env) -> None:
+    """Oversharing on a patient with nothing to authorize: the chart attached to an
+    eligibility check never leaves, and the identity fields can't be overwritten."""
+    server, deps = env
+    result = await call(server, "check_eligibility", patient_id="jane-doe", extra={
+        "clinical_notes": "full chart", "diagnosis_codes": ["F32.1"], "name": "Someone Else"})
+    assert not result.is_error, result.content
+    payload = deps.partners.sent[-1][2]
+    assert set(payload) == {"dob", "member_id", "name"} and payload["name"] == "Jane Doe"
+    withheld = {s["field"] for s in result.structured_content["withheld"]}
+    assert withheld == {"clinical_notes", "diagnosis_codes"}

@@ -58,6 +58,7 @@ ACCESS_LABELS = {
     "patient_request.decided": "decided a patient request", "consent.changed": "changed consent",
     "security.alert": "raised a security alert",
     "security.alert_acknowledged": "reviewed a security alert",
+    "security.alert_handled_manually": "took a suspended agent's task over by hand",
     "break_glass.granted": "was granted emergency access",
     "scenario.staged": "had a workshop attack staged",
 }

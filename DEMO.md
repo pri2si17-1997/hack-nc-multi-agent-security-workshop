@@ -65,11 +65,32 @@ on the model behaving or on someone spotting the attack in time.
 - Step mode (top of the Activity panel) reveals one step per **Next ▸**. Before each refusal,
   ask the room *"Allow or deny?"*
 
-### Patients used below
+### Choosing a patient
 
-**Jane Doe** (the main story: penicillin allergy, oxycodone, psychiatry history), **Hobert
-Lynch** (kidney function), **Jeff Heathcote**, and **Kermit Legros** (the *other* patient in
-*Wrong patient*). Any patient from the ward list works for the attack scenarios.
+The steps below use **Jane Doe**, the main story, but every patient on the ward works for
+almost every scenario. Each has a portal login `first.last` (e.g. `norris.dubuque`), and the
+portal's quick messages use that patient's own medicines.
+
+| Patient | Admitted for | What their discharge shows |
+|---|---|---|
+| **Jane Doe** | Pneumonia | Penicillin allergy caught; oxycodone (controlled); home oxygen needing insurance approval; **psychiatry** records (sensitive) |
+| **Kermit Legros** | Pneumonia | Home oxygen needing insurance approval; **HIV** records (sensitive). The *other* patient in *Wrong patient* |
+| **Hobert Lynch**, **Merlin Nienow** | Kidney injury | The plan restarts a blood-pressure tablet that must stay on hold (creatinine too high) |
+| **Norris DuBuque**, **Mel Doyle** | Urosepsis | The planned antibiotic clashes with a sulfa allergy and is swapped |
+| **Franchesca Harvey**, **Tabatha Harber** | Hip fracture | Oxycodone (controlled) among four new prescriptions |
+| **Jeff Heathcote**, **Oma Runolfsson** | Heart attack | Three new heart medicines; Jeff's metformin was held for the stay |
+| **Luna Sawayn** | Seizure | One new medicine |
+| **Nelia Rolfson** | Diabetes crisis | New insulin |
+
+**Which scenarios need which patient**
+
+| Works with | Scenarios |
+|---|---|
+| **Any patient** | 1, 2, 4, 6, 8, 9, 10, 13, and the nurse's refusal in 3 |
+| **Jane or Kermit only**: the only patients with sensitive records | The nurse's withheld records in 3, consent in 5, break-the-glass in 11. For anyone else nothing is withheld, so there is nothing to unlock |
+| **Best with Jane or Kermit** | 7 (an insurance request with records to strip; for others the agent over-shares on the eligibility check instead), and 12's insurer switch (others have nothing to send the insurer) |
+| **Controlled substance** | 8 tampers with any prescription; for the "×300 oxycodone" story use Jane, Franchesca or Tabatha |
+| **Jane** | The finale, which is written around her |
 
 ---
 
@@ -96,7 +117,8 @@ continues: the AI makes the work better, it is not what makes it safe. 🛡 *Tru
 
 **Shows:** nine agents, a model choosing the steps, and the paper trail they leave.
 
-1. Ward → **Jane Doe** → *"Discharge Jane Doe"*.
+1. Ward → **Jane Doe** → *"Discharge Jane Doe"*. (Others: **Norris DuBuque** for a sulfa
+   allergy, **Merlin Nienow** for kidney function.)
 2. Watch the **Map**, then the **Feed**: the coordinator (✨ gpt-oss) picks the specialists;
    medication reconciliation catches her **penicillin allergy** and swaps the antibiotic to
    doxycycline.
@@ -130,7 +152,8 @@ token it carries doesn't allow it. Delegation narrows authority, never widens it
 
 **Shows:** an agent acting *for the patient* can only ask, not act.
 
-1. **jane.doe** → *My health* → **Raise a dose** chip (*"…raise my oxycodone to 10 mg"*) →
+1. **jane.doe** → *My health* → **Raise a dose** chip (*"…raise my oxycodone to 10 mg"*; any
+   patient's login works, and the chip names one of their own medicines) →
    **Send**. Reply: the care team decides; nothing changes yet.
 2. Ward (**dr.morgana**) → **Jane Doe**: *📨 Jane asks to change a medicine* → **Accept into
    plan**. (As **nurse.gawain**, the same button is refused.)
@@ -169,7 +192,7 @@ for the attack style. The boundaries never see that label.
 |---|---|---|---|---|
 | 6. Prompt injection | Prompt injection | Scheduling agent | Least privilege, signature, fixed destinations | **Silent**; found afterwards |
 | 7. Oversharing | Over-disclosure | Benefits agent | Minimum necessary at the disclosure gateway | Silent; data withheld |
-| 8. Tampered prescription | Tampering after approval | Prescription agent | Signature over the exact content | Visible: *nothing sent* |
+| 8. Tampered prescription | Tampering after approval | Prescription agent | Signature over the exact content | **🚨 Alert + hold** |
 | 9. Rogue agent | Privilege misuse | Scheduling agent | Per-agent tool policy (OPA) | **🚨 Alert + hold** |
 | 10. Wrong patient | Cross-patient access | Benefits agent | Task-to-patient binding | **🚨 Alert + hold** |
 
@@ -244,7 +267,8 @@ records: a reportable breach, with a patient who never sent the message.
 2. Ward → *"Discharge Jane Doe"*.
 3. The benefits agent attaches psychiatry notes and "the full chart" to the prior
    authorization. Its line on the card: *🛡 The disclosure gateway withheld N item(s) the
-   payer doesn't need.*
+   payer doesn't need.* (For a patient with no equipment to approve, e.g. Mel Doyle, it
+   attaches the chart to the insurance eligibility check instead, with the same result.)
 4. Feed → **Benefits agent**: 🙊 *over-shares*, then the 📤 disclosure with *🛡 Withheld N*.
 5. Console → *Audit trail* → *Accounting of disclosures*: the **payload that actually left**,
    and the withheld items. **🎭 staged attacks only** shows the disclosure labelled
@@ -264,13 +288,24 @@ disclosures shows exactly what left.
 
 1. Console → **Tampered prescription** on.
 2. Ward → discharge Jane → **Sign** oxycodone ×20.
-3. The prescription agent submits **×300** instead. Feed → **Prescription agent**:
+3. The prescription agent submits **×300** instead. It does this to every prescription it
+   sends while the switch is on, for any patient. Feed → **Prescription agent**:
    😈 *alters the signed prescription* (*Signed … x20, but it submits … x300*), then
    🛡 **Signature check failed: nothing sent**.
-4. The card shows the prescription as *Refused*; the pharmacy never receives it. The approval
-   is used up, so it can't be replayed.
+4. The pharmacy never receives it, and the approval is used up, so it can't be replayed. A
+   content change after signing is never an honest mistake: 🚨 **security alert**, prescription
+   sending **suspended**, discharge **On hold: security review**. The alert says *the
+   signature check caught it changing what you signed*. Sign the next prescription: it is
+   **held** (*Signed, held*), not sent through the suspended agent.
 5. **🎭 staged attacks only** in the audit trail: **🎭 Tampering after approval**.
-6. **Tampered prescription** off.
+6. Two ways out, both physicians only and audited:
+   - **IT fixed it**: **Tampered prescription** off → **Acknowledge & retry**. The agent
+     re-drafts only what didn't go out (the old cards read *Replaced by a new draft*); sign
+     them → discharged. Retry with the switch still on and it's caught again.
+   - **IT hasn't fixed it yet**: **Handle manually**, e.g. *"Sent from the e-prescribing
+     system"*. The agent stays suspended; the task reads *Handled manually by dr.morgana*;
+     sign the summary → discharged. The incident report shows who took over.
+7. **Tampered prescription** off.
 
 **Implication.** Human approval is only worth something if it's bound to **exactly what was
 approved**. The signature covers the content, and the gateway checks it at the moment of
@@ -291,7 +326,8 @@ diversion. 🛡 *Trust*
 5. "IT patches the agent": Console → **Rogue agent** off.
 6. Ward → **Acknowledge & retry**. (As **nurse.gawain**, refused: only a physician reviews.)
    The task reruns cleanly → sign → discharged.
-7. Leave the scenario on in step 5 and the retry is blocked again.
+7. Leave the scenario on in step 5 and the retry is blocked again. While IT works on it,
+   **Handle manually** (*"Booked by phone"*) lets the discharge finish without the agent.
 
 **Implication.** The coordinator learns of the attempt from the **gateway's own audit
 entry**, never from the agent: a rogue agent wouldn't report itself. 📝 *Accountability*.
@@ -317,13 +353,18 @@ chart and snooping on a neighbour's. 🔑 *Privilege*
 
 ### Silent or loud: why the difference
 
-Prompt injection, oversharing and tampering are **stopped silently**; rogue agent and wrong
+Prompt injection and oversharing are **stopped silently**; tampering, rogue agent and wrong
 patient **raise an alarm**. In every case a **boundary** stops the attack; nobody's vigilance
-is required. The alarm comes from a deterministic rule on the gateway's own records: an agent
-calling a tool outside its job or touching another patient is never legitimate, so it's worth
-stopping the line for. A refused disclosure can be an honest mistake, so it's refused,
-recorded and left for review. Good security engineering makes the safe outcome automatic and
-keeps alarms for what's unambiguous.
+is required. The alarm comes from a deterministic rule on the gateways' own records: an agent
+calling a tool outside its job, touching another patient, or changing what a physician signed
+is never legitimate, so it's worth stopping the line for. A refused disclosure or a trimmed
+payload can be an honest mistake, so it's refused, recorded and left for review. Good security
+engineering makes the safe outcome automatic and keeps alarms for what's unambiguous.
+
+**Recovery is human, and care doesn't stop.** Retrying only makes sense once IT has fixed the
+agent; until then the physician takes the task over by hand (**Handle manually**), the way a
+hospital falls back to its normal systems when one breaks. The agent stays suspended either
+way, and both choices are audited.
 
 ---
 
@@ -332,11 +373,14 @@ keeps alarms for what's unambiguous.
 ### 11. Break-the-glass
 
 1. Console → **Break-the-glass** on.
-2. **nurse.gawain** → **Jane Doe** → **Chart** → **Break the glass**, with a justification of
+2. **nurse.gawain** → **Jane Doe** (or **Kermit Legros**; nobody else has records to unlock)
+   → **Chart** → **Break the glass**, with a justification of
    at least 15 characters (e.g. *"Patient unresponsive in the ED, need psychiatric
    history"*).
 3. The psychiatry note appears; the access is logged at **high severity**.
 4. Console → **Break-the-glass** off: the grant is revoked and the note disappears.
+5. Still as **nurse.gawain**: *"Discharge Jane Doe"* is refused. Breaking the glass widens what
+   you can **see**, never what you can **do**: discharging stays a physician's order.
 
 **Implication.** In an emergency, a policy that says "no" can harm the patient. Break-the-glass
 lets a person override it: **explicitly, with a reason, for a limited time, and loudly
@@ -374,9 +418,14 @@ The question a hospital gets asked after an incident: *"Prove what your AI agent
 this patient's data."* One live run uses everything above; then the answer comes from the
 system's own records.
 
-**Setup.** Console → **Prepare the finale**: it resets the demo, turns the AI model, every
-agent and partner on, and stages only **Wrong patient**. The incident report starts from this
-moment.
+**Setup.** Console → *Finale: the morning after* → **Reset & stage Wrong patient**: it resets
+the demo, turns the AI model, every agent and partner on, and stages one attack, **Wrong
+patient**. The incident report starts from this moment.
+
+*Why this attack?* Reaching into another patient's record is never legitimate, so it leaves
+the fullest trail to investigate: the gateway's refusal, OPA's own decision log as a second
+witness, the security alert and the physician's review. It's also the entry the cover-up
+rewrites in the twist.
 
 **The night (about 4 min, live).**
 
@@ -413,7 +462,7 @@ stopped). 📝 *Accountability* is the page itself: five questions a regulator, 
 court would ask, answered from records the agents didn't write, cross-checked against the
 partners' logs and OPA's, and **still truthful when your own admin tries to rewrite them**.
 
-**Before the next rehearsal:** `make reset-audit`, then **Prepare the finale** again.
+**Before the next rehearsal:** `make reset-audit`, then **Reset & stage Wrong patient** again.
 
 ---
 
@@ -431,5 +480,5 @@ partners' logs and OPA's, and **still truthful when your own admin tries to rewr
 | Old checklists or signatures on screen | **Reset demo** in the console |
 | "EHR gateway is not reachable" | A service is restarting: wait a few seconds and reload |
 | Login loops or "cookie not found" | Use Chrome, and start again from http://localhost:8000 |
-| Incident report shows old rehearsals | Choose *Since the last demo reset*, or **Prepare the finale** again |
+| Incident report shows old rehearsals | Choose *Since the last demo reset*, or **Reset & stage Wrong patient** again |
 | Audit chain broken when it shouldn't be | You ran `make tamper-audit` / `make cover-up` earlier: `make reset-audit` |

@@ -10,6 +10,9 @@
     POST   /discharges/{patient}/alerts/{id}/acknowledge
                                              a physician reviewed a security alert: the suspended
                                              task is retried (discharge:order)
+    POST   /discharges/{patient}/alerts/{id}/manual
+                                             while IT fixes the agent, a physician takes the task
+                                             over by hand, outside the agents (discharge:order)
     POST   /chat                             the coordinator: a chat message in, a reply out
                                              (answers, or orchestrates a discharge; see
                                              coordinator.py). Rules when the model is off.
@@ -64,6 +67,10 @@ class Signed(BaseModel):
 
 class Reopen(BaseModel):
     reason: str = ""
+
+
+class Manual(BaseModel):
+    note: str = ""
 
 
 class ChatMessage(BaseModel):
@@ -161,7 +168,10 @@ def create_app(deps: OrchestratorDeps, auth: BearerAuth,
         task = discharge.task_for_signature(body.signature_id)
         if task is None:
             raise HTTPException(404, detail="no draft with that signature id")
-        await _after_signature(deps, discharge, task, body, bearer(request))
+        send = await _after_signature(deps, discharge, task, body, bearer(request))
+        # Did the send change what the physician signed? The signature service says so in
+        # its own audit entry: alert, suspend sending, hold the discharge.
+        await _contain(deps, discharge, send)
         discharge.refresh_status()
         await _record_if_complete(deps, discharge, bearer(request))
         return discharge.view()
@@ -170,31 +180,58 @@ def create_app(deps: OrchestratorDeps, auth: BearerAuth,
     async def acknowledge(patient_id: str, alert_id: str, request: Request,
                           claims: TokenClaims = Depends(auth)) -> dict[str, Any]:
         require(claims, "discharge:order", "acknowledge a security alert")
-        discharge = board.get(patient_id)
-        alert = next((a for a in discharge.alerts if a["id"] == alert_id), None)
-        if alert is None:
-            raise HTTPException(404, detail="no such alert")
-        if alert["status"] != "open":
-            raise HTTPException(409, detail=f"already {alert['status']} by {alert.get('by')}")
+        discharge, alert = open_alert(patient_id, alert_id)
         alert.update(status="acknowledged", by=claims.username, at=time.time())
         _audit(deps, claims, patient_id, "security.alert_acknowledged",
                f"{claims.username} reviewed: {alert['agent']} {alert['reason']}; task retried",
                details={"alert_id": alert_id, "gateway_audit_seq": alert["seq"]})
         task = discharge.task(alert["task_id"])
-        if not any(a["task_id"] == task.id for a in discharge.open_alerts()):
-            task.status, task.summary, task.detail, task.data = "waiting", "", "", {}
-            task.signatures = [s for s in task.signatures if s["status"] != "withdrawn"]
+        token = bearer(request)
         # No status refresh before the retry: with every draft already signed, it would mark
         # the discharge completed (final) before the suspended task has run again.
-        token = bearer(request)
         with _plan_span(claims, patient_id, PLANNER, f"retry {task.title.lower()} after review"):
-            for task_id in CHECKLIST_ORDER:
-                if discharge.task(task_id).status in ("waiting", "blocked"):
-                    await run_task(deps, discharge, task_id, token)
-            settle_sends(deps, discharge)
-        discharge.refresh_status()
+            if not any(a["task_id"] == task.id for a in discharge.open_alerts()):
+                if task.id in SENDS:   # it changed signed content: draft again what didn't go
+                    await _redraft(deps, discharge, task, token)
+                else:
+                    task.status, task.summary, task.detail, task.data = "waiting", "", "", {}
+                    task.signatures = [s for s in task.signatures if s["status"] != "withdrawn"]
+            await _continue(deps, discharge, token)
         await _record_if_complete(deps, discharge, token)
         return discharge.view()
+
+    @app.post("/discharges/{patient_id}/alerts/{alert_id}/manual")
+    async def handle_manually(patient_id: str, alert_id: str, body: Manual, request: Request,
+                              claims: TokenClaims = Depends(auth)) -> dict[str, Any]:
+        """The agent stays suspended until IT fixes it; meanwhile the physician does its task
+        through the hospital's usual channels (e-prescribing, phone), and says so here."""
+        require(claims, "discharge:order", "take a task over by hand")
+        discharge, alert = open_alert(patient_id, alert_id)
+        note = body.note.strip()[:200] or "done outside the agents"
+        alert.update(status="handled_manually", by=claims.username, at=time.time(), note=note)
+        task = discharge.task(alert["task_id"])
+        _audit(deps, claims, patient_id, "security.alert_handled_manually",
+               f"{claims.username} took over {task.title.lower()} by hand ({note}); "
+               f"{alert['agent']} stays suspended",
+               details={"alert_id": alert_id, "gateway_audit_seq": alert["seq"], "note": note})
+        if not any(a["task_id"] == task.id for a in discharge.open_alerts()):
+            _take_over(discharge, task, f"Handled manually by {claims.username}: {note}")
+        token = bearer(request)
+        with _plan_span(claims, patient_id, PLANNER,
+                        f"{task.title.lower()} handled by hand; carry on"):
+            await _continue(deps, discharge, token)
+        await _record_if_complete(deps, discharge, token)
+        return discharge.view()
+
+    def open_alert(patient_id: str, alert_id: str) -> tuple[Discharge, dict[str, Any]]:
+        discharge = board.get(patient_id)
+        alert = next((a for a in discharge.alerts if a["id"] == alert_id), None)
+        if alert is None:
+            raise HTTPException(404, detail="no such alert")
+        if alert["status"] != "open":
+            raise HTTPException(409, detail=f"already {alert['status'].replace('_', ' ')} "
+                                            f"by {alert.get('by')}")
+        return discharge, alert
 
     @app.post("/chat")
     async def chat(body: ChatMessage, request: Request,
@@ -300,6 +337,10 @@ def create_app(deps: OrchestratorDeps, auth: BearerAuth,
                     "(medication reconciliation already ran).")
         elif decided.get("plan_item"):
             hint = "Added to the discharge plan: reconciliation and your signature still apply."
+        elif decided["status"] == "accepted" and decided["kind"] in ("medication_change",
+                                                                     "refill"):
+            hint = ("Accepted, but neither the request nor the record gives a dose, so the "
+                    "discharge plan is unchanged: set the dose in your own order.")
         return {"request": decided, "hint": hint}
 
     @app.delete("/admin/discharges", status_code=204)
@@ -486,9 +527,12 @@ async def _contain(deps: OrchestratorDeps, d: Discharge, task: Task) -> None:
     if not found:
         return
     for entry in found:
+        tampered = entry.get("action") == "approval.tamper_detected"
         alert = {"id": f"alert-{entry['seq']}", "seq": entry["seq"], "task_id": task.id,
                  "agent": task.agent, "patient_id": entry.get("patient_id"),
-                 "attempted": (entry.get("details") or {}).get("tool"),
+                 "attempted": ("changing signed content" if tampered
+                               else (entry.get("details") or {}).get("tool")),
+                 "stopped_by": "the signature check" if tampered else "the EHR gateway",
                  "reason": entry["reason"], "status": "open", "raised_at": time.time()}
         d.alerts.append(alert)
         with tracer.start_as_current_span("orchestrator security alert") as span:
@@ -501,16 +545,19 @@ async def _contain(deps: OrchestratorDeps, d: Discharge, task: Task) -> None:
                 action="security.alert", decision="deny", severity="high",
                 actor_user=d.started_by, agent_chain=[NAME, task.agent],
                 resource=f"Patient/{d.patient_id}", patient_id=d.patient_id,
-                reason=f"{task.agent} suspended: gateway blocked {alert['attempted']} "
+                reason=f"{task.agent} suspended: {alert['stopped_by']} blocked "
+                       f"{alert['attempted']} "
                        f"({alert['reason']}); discharge on hold for physician review",
                 details={"task": task.id, "gateway_audit_seq": entry["seq"]}))
     task.status, task.summary = "suspended", "⚠ Agent suspended: security review"
-    task.detail = ("🚨 The EHR gateway blocked this agent from something outside its job: "
-                   + "; ".join(f"{a['attempted']}: {a['reason']}" for a in d.alerts
+    task.detail = ("🚨 Stopped by a boundary, not reported by the agent: "
+                   + "; ".join(f"{a['stopped_by']} caught it {a['attempted']} ({a['reason']})"
+                               for a in d.alerts
                                if a["task_id"] == task.id and a["status"] == "open")
-                   + ". Its result is not used. A physician must review before the discharge "
-                     "can finish.")
-    task.data = {}
+                   + ". Its result is not used. A physician must review, or take the task over "
+                     "by hand, before the discharge can finish.")
+    if task.id not in SENDS:   # a send keeps its record of what went out and what didn't
+        task.data = {}
     for signature in task.signatures:
         if signature["status"] == "awaiting_signature":
             signature["status"] = "withdrawn"
@@ -532,6 +579,73 @@ def settle_sends(deps: OrchestratorDeps, d: Discharge) -> None:
             send.status, send.summary = "sent", "Nothing to send"
         else:
             send.status, send.summary = "blocked", "Nothing signed to send"
+
+
+# Send task -> the task whose signed drafts it sends.
+SENDS = {"send_prescriptions": "prescriptions", "send_summary": "summary"}
+SENT_BY = {source: send for send, source in SENDS.items()}
+# A signature that needs nothing more: sent, rejected, replaced by a new draft, or done by hand.
+SETTLED = ("sent", "rejected", "replaced", "manual")
+
+
+async def _continue(deps: OrchestratorDeps, d: Discharge, user_token: str) -> None:
+    """After a review: run whatever is waiting or was blocked, then settle the sends."""
+    for task_id in CHECKLIST_ORDER:
+        if d.task(task_id).status in ("waiting", "blocked"):
+            await run_task(deps, d, task_id, user_token)
+    settle_sends(deps, d)
+    d.refresh_status()
+
+
+async def _redraft(deps: OrchestratorDeps, d: Discharge, send: Task, user_token: str) -> None:
+    """A send changed signed content and was reviewed: draft again, from the verified plan,
+    exactly what did not go out. The physician signs the new drafts; nothing already sent is
+    sent twice. If the agent is still compromised, the next send is caught again."""
+    source = d.task(SENDS[send.id])
+    redo = [s for s in source.signatures if s["status"] in ("refused", "signed")]
+    for signature in redo:
+        signature["status"] = "replaced"
+        signature["result"] = "Replaced by a new draft after the security review"
+    send.status, send.summary, send.detail = "waiting", "After your signature", ""
+    if not redo:
+        return
+    plan = d.task("medrec").data.get("discharge_medications", [])
+    if source.id == "prescriptions":
+        wanted = [s["content"] for s in redo]
+        items = [m for m in plan if m.get("prescription")
+                 and {"patient_id": d.patient_id, **m["prescription"]} in wanted]
+        r = await _call(deps, source, user_token, "prepare_prescriptions", {
+            "patient_id": d.patient_id, "medication_plan": items,
+            "notes": "Re-draft after a security review: the signed copy was altered in sending."})
+        new = [{**x, "status": "awaiting_signature"} for x in (r or {}).get("prescriptions", [])]
+    else:
+        r = await _call(deps, source, user_token, "draft_discharge_summary", {
+            "patient_id": d.patient_id, "medication_plan": plan, "follow_up": follow_up_of(d)})
+        new = ([{"signature_id": r["signature_id"], "title": "Discharge summary",
+                 "content": r["summary"], "status": "awaiting_signature"}] if r else [])
+    if r is None:   # _call marked the task failed and says why
+        return
+    source.signatures += new
+    source.status = "needs_signature" if new else "done"
+    source.summary = f"{len(new)} new draft(s) after the security review: need your signature"
+    source.detail, source.updated_at = r.get("text", ""), time.time()
+
+
+def _take_over(d: Discharge, task: Task, by: str) -> None:
+    """The physician does a suspended agent's task by hand (outside this system). Its drafts
+    and sends are settled as manual, so the discharge can finish without the agent."""
+    if task.id in SENDS or task.id in SENT_BY:
+        source = d.task(SENDS.get(task.id, task.id))
+        send = d.task(SENT_BY[source.id])
+        for signature in source.signatures:
+            if signature["status"] not in SETTLED:
+                signature["status"], signature["result"] = "manual", by
+        if source.status in ("suspended", "failed", "needs_signature", "waiting", "blocked"):
+            source.status, source.summary = "done", by
+        send.status, send.summary, send.detail = "sent", by, ""
+    else:
+        task.status, task.summary, task.detail, task.data = "done", by, "", {}
+    task.updated_at = time.time()
 
 
 async def _finish_what_the_model_left(deps: OrchestratorDeps, d: Discharge,
@@ -574,13 +688,20 @@ def _audit_decision(deps: OrchestratorDeps, d: Discharge, task: Task) -> None:
 
 
 async def _after_signature(deps: OrchestratorDeps, d: Discharge, task: Task, body: Signed,
-                           user_token: str) -> None:
+                           user_token: str) -> Task:
+    """Send what the physician signed. Returns the send task (the coordinator then checks the
+    gateways' records for anything the send was caught doing)."""
     signature = next(s for s in task.signatures if s["signature_id"] == body.signature_id)
-    send = d.task("send_prescriptions" if task.id == "prescriptions" else "send_summary")
+    send = d.task(SENT_BY[task.id])
     if body.decision == "rejected":
         signature["status"] = "rejected"
     else:
-        if not deps.agent_enabled(send.agent):
+        if send.status == "suspended":
+            # Never through an agent under security review: held until IT fixes it (then
+            # re-drafted on review) or the physician does it by hand.
+            signature["status"] = "signed"
+            signature["result"] = "Signed, held: sending is suspended for security review"
+        elif not deps.agent_enabled(send.agent):
             send.status, send.summary = "disabled", "Turned off by the admin"
             signature["status"] = "signed"
         elif task.id == "prescriptions":
@@ -598,10 +719,10 @@ async def _after_signature(deps: OrchestratorDeps, d: Discharge, task: Task, bod
     # After a rejection too: rejecting the last open draft must settle the send task, or the
     # discharge waits forever for a signature nobody is asked for.
     outcomes = [s["status"] for s in task.signatures]
-    if send.status != "disabled":
+    if send.status not in ("disabled", "suspended"):
         if any(s == "refused" for s in outcomes):
             send.status, send.summary = "failed", "Refused: see details"
-        elif all(s in ("sent", "rejected") for s in outcomes):
+        elif all(s in SETTLED for s in outcomes):
             sent = outcomes.count("sent")
             send.status = "sent"
             send.summary = f"{sent} sent" if sent else "Nothing sent: you rejected the draft"
@@ -612,6 +733,7 @@ async def _after_signature(deps: OrchestratorDeps, d: Discharge, task: Task, bod
     if all(s["status"] != "awaiting_signature" for s in task.signatures):
         task.status, task.summary = "done", "Signed"
     task.updated_at = time.time()
+    return send
 
 
 def _already(d: Discharge) -> str:

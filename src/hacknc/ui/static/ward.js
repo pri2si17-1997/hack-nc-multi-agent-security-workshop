@@ -96,7 +96,8 @@
       card.append(actions);
     } else {
       const label = { signed: "Signed", sent: "Signed and sent", refused: "Signed, but sending was refused",
-                      rejected: "Rejected" }[sig.status] || sig.status;
+                      rejected: "Rejected", replaced: "Replaced by a new draft",
+                      manual: "Done by hand" }[sig.status] || sig.status;
       card.append(el("p", "muted small no-margin", label + (sig.result ? ` · ${sig.result}` : "")));
     }
     return card;
@@ -113,33 +114,53 @@
   function alertCard(alert) {
     const card = el("div", `alert-card alert-${alert.status}`);
     const name = window.HackNC.activity.agentLabel(alert.agent);
-    card.append(el("strong", "", alert.status === "open"
-      ? `🚨 Security alert: ${name} suspended` : `✔ Reviewed: ${name}`));
+    card.append(el("strong", "", {
+      open: `🚨 Security alert: ${name} suspended`,
+      acknowledged: `✔ Reviewed: ${name}`,
+      handled_manually: `✔ Handled by hand: ${name} stays suspended`,
+    }[alert.status] || alert.status));
+    const stoppedBy = alert.stopped_by || "the EHR gateway";
+    const caught = alert.attempted === "changing signed content"
+      ? `${stoppedBy[0].toUpperCase()}${stoppedBy.slice(1)} caught it changing what you signed`
+      : `${stoppedBy[0].toUpperCase()}${stoppedBy.slice(1)} blocked it from ${alert.attempted || "a tool"}${alert.patient_id ? ` for ${readable(alert.patient_id)}` : ""}`;
     card.append(el("p", "small no-margin",
-      `The EHR gateway blocked it from ${alert.attempted || "a tool"}${alert.patient_id ? ` for ${readable(alert.patient_id)}` : ""}: ${readable(alert.reason)}. ` +
-      "Its result is not used; the discharge is on hold."));
+      `${caught}: ${readable(alert.reason)}. Its result is not used; the discharge is on hold.`));
     if (alert.status === "open") {
       const actions = el("div", "sig-actions");
       const ack = el("button", "btn btn-danger btn-sm", "Acknowledge & retry");
-      ack.type = "button";
-      ack.addEventListener("click", () => acknowledge(alert, ack));
-      actions.append(ack, el("span", "muted small",
-        "Physicians only. Your review is audited; if the agent oversteps again, it is suspended again."));
+      const manual = el("button", "btn btn-ghost btn-sm", "Handle manually");
+      ack.type = manual.type = "button";
+      ack.addEventListener("click", () => review(alert, "acknowledge", [ack, manual]));
+      manual.addEventListener("click", () => review(alert, "manual", [ack, manual]));
+      actions.append(ack, manual, el("span", "muted small",
+        "Physicians only, audited. Retry once IT has fixed the agent (if it misbehaves again, " +
+        "it is caught again); until then, do its task by hand."));
       card.append(actions);
+    } else if (alert.status === "handled_manually") {
+      card.append(el("p", "muted small no-margin", `${alert.by} did it by hand: ${alert.note}.`));
     } else {
       card.append(el("p", "muted small no-margin", `Reviewed by ${alert.by}; the task was retried.`));
     }
     return card;
   }
 
-  async function acknowledge(alert, button) {
-    button.disabled = true;
+  async function review(alert, how, buttons) {
+    let body;
+    if (how === "manual") {
+      const note = window.prompt("How will you do it outside the agents?",
+        alert.task_id === "send_prescriptions" ? "Sent from the e-prescribing system"
+                                                : "Done by phone");
+      if (note === null) return;
+      body = { note };
+    }
+    buttons.forEach((b) => { b.disabled = true; });
     const id = current.id;
-    const started = await postJson(`/api/discharges/${id}/alerts/${alert.id}/acknowledge`);
-    const result = await follow(started, "Review security alert");
+    const started = await postJson(`/api/discharges/${id}/alerts/${alert.id}/${how}`, body);
+    const result = await follow(started, how === "manual" ? "Take over by hand"
+                                                           : "Review security alert");
     if (!result.ok) {
       addMessage("system", `✕ ${result.reason}`, id).classList.add("msg-refused");
-      button.disabled = false;
+      buttons.forEach((b) => { b.disabled = false; });
       return;
     }
     showDischarge(result.checklist, id);

@@ -10,14 +10,24 @@
   </div>
   <div class="actions">
     <button class="btn btn-ghost" id="reset" type="button">Reset demo</button>
-    <button class="btn btn-primary" id="prepare-finale" type="button"
-            title="Reset, AI model on, every agent and partner on, only the Wrong patient scenario staged">Prepare the finale</button>
   </div>
 </header>
 <div class="alert" id="admin-result" hidden></div>
 {% if not store_ok %}<div class="alert alert-deny">The flag store (approval service) is unreachable.</div>{% endif %}
 
 <div class="admin-grid">
+  <section class="card">
+    <h2 class="section-label">Finale: the morning after</h2>
+    <p class="small">One live run that ends in an incident report. This resets the demo, turns
+      the AI model and every agent and partner on, and stages one attack:
+      <strong>Wrong patient</strong>, the benefits agent reaching into another patient's record.</p>
+    <p class="muted small">Why this attack: reaching into another patient's record is never
+      legitimate, so it leaves the fullest trail to investigate. The EHR gateway's refusal, OPA's
+      own decision log as a second witness, a security alert and a physician's review. It is
+      also the entry <code>make cover-up</code> rewrites. The incident report's period starts
+      from this click.</p>
+    <button class="btn btn-ghost" id="prepare-finale" type="button">Reset &amp; stage Wrong patient</button>
+  </section>
   {% for group in groups %}
   <section class="card">
     <h2 class="section-label">{{ group.title }}</h2>
@@ -48,9 +58,7 @@
     </ul>
     <p class="muted small">Reset demo empties the signature queue and checklists, makes partners
       forget what they received and removes posted instructions. The tamper-evident audit chain is
-      never reset from here: use <code>make reset-audit</code>. <strong>Prepare the finale</strong>
-      resets too, then turns the AI model, every agent and partner on, and stages only
-      <em>Wrong patient</em>; the incident report starts from that moment.</p>
+      never reset from here: use <code>make reset-audit</code>.</p>
   </section>
 </div>
 {% endblock %}

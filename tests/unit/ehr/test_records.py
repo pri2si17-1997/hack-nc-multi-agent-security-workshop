@@ -95,6 +95,19 @@ def test_accepted_dose_change_joins_the_discharge_plan_and_reset_restores(repo) 
     assert not any(m["text"] == "hello" for m in jane.messages)
 
 
+def test_accepted_request_without_any_dose_leaves_the_plan_alone(repo) -> None:
+    """'Raise my insulin': no number in the request, none in the record. No prescription with
+    an empty dose goes into the plan; the physician sets it."""
+    pid = "pt-982beb81"   # Merlin Nienow: a mixed insulin with no dose on file
+    before = list(repo.get(pid).admission()["dischargePlan"].get("medications", []))
+    request = repo.submit_request(pid, "medication_change", "Raise my insulin",
+                                  "merlin.nienow", drug="insulin")
+    decided = repo.decide_request(pid, request["id"], True, "dr.morgana")
+    assert decided["status"] == "accepted" and decided["plan_item"] is None
+    assert repo.get(pid).admission()["dischargePlan"].get("medications", []) == before
+    repo.reset_runtime_state()
+
+
 def test_declined_request_changes_nothing(repo) -> None:
     before = list(repo.get("jane-doe").admission()["dischargePlan"]["medications"])
     request = repo.submit_request("jane-doe", "medication_change", "Stop metformin",

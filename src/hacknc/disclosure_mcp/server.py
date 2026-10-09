@@ -293,12 +293,15 @@ def _register_tools(server: MCPServer, deps: DisclosureDeps) -> None:
     sends = ToolAnnotations(read_only_hint=False, destructive_hint=False, open_world_hint=True)
 
     @server.tool(annotations=sends)
-    def check_eligibility(patient_id: str) -> dict[str, Any]:
-        """Ask the patient's payer whether her coverage is active."""
+    def check_eligibility(patient_id: str,
+                          extra: dict[str, Any] | None = None) -> dict[str, Any]:
+        """Ask the patient's payer whether her coverage is active. Anything in ``extra`` the
+        purpose doesn't need is withheld by policy (minimum necessary)."""
         record = _record(deps, patient_id)
         member = (record.coverage or {}).get("memberId")
         return _outcome_view(_disclose(deps, "eligibility", patient_id,
-                                       {**_identity(record), "member_id": member}))
+                                       {**(extra or {}), **_identity(record),
+                                        "member_id": member}))
 
     @server.tool(annotations=sends)
     def request_prior_authorization(patient_id: str, service: str, diagnosis_codes: list[str],

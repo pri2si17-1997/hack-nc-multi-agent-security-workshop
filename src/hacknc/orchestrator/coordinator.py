@@ -93,7 +93,8 @@ def ready_to_record(d: Discharge) -> tuple[bool, str]:
             continue
         if task.status != "done":
             return False, f"{task.title.lower()} is {task.status.replace('_', ' ')}"
-        if any(s["status"] not in ("sent", "rejected") for s in task.signatures):
+        if any(s["status"] not in ("sent", "rejected", "replaced", "manual")
+               for s in task.signatures):
             return False, f"{task.title.lower()} has items not signed and sent"
     if d.status != "completed":
         return False, "sending to the pharmacy and family doctor has not finished"

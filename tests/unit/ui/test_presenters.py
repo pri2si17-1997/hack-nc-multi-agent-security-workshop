@@ -95,3 +95,21 @@ def test_refusals_inside_exception_groups_stay_refusals() -> None:
     group = ExceptionGroup("outer", [ExceptionGroup("inner", [denied])])
     assert _find(group, (ToolDenied,)) is denied
     assert _find(ExceptionGroup("x", [OSError("down")]), (ToolDenied,)) is None
+
+
+def test_portal_suggestions_use_the_patients_own_medicines() -> None:
+    from hacknc.ui.presenters import drug_word, portal_suggestions
+
+    jane = [{"medication": {"text": "Oxycodone hydrochloride 5 MG Oral Tablet"}, "dose": "5 mg",
+             "status": "active", "controlledSchedule": "C-II"},
+            {"medication": {"text": "24 HR Metformin hydrochloride 500 MG Extended Release"},
+             "status": "on-hold"}]
+    assert portal_suggestions(jane) == {
+        "refill": "Can I get a refill of my oxycodone? I only have two tablets left.",
+        "raise": "It isn't working well enough. Please raise my oxycodone to 10 mg.",
+        "side_effect": "Since yesterday the metformin makes me dizzy."}
+    norris = [{"medication": {"text": "1 ML DOCEtaxel 20 MG/ML Injection"}, "status": "active"},
+              {"medication": {"text": "Simvistatin 10 MG Oral Tablet"}, "status": "active"}]
+    assert "simvistatin to 20 mg" in portal_suggestions(norris)["raise"]   # a tablet first
+    assert drug_word("ferrous sulfate 325 MG Oral Tablet") == "ferrous sulfate"
+    assert portal_suggestions([]) == {}

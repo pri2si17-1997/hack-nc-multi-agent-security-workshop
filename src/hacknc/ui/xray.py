@@ -48,7 +48,8 @@ STORY_AUDIT_ACTIONS = {"discharge.started", "disclosure.sent", "disclosure.block
                        "signature.requested", "approval.approve", "approval.reject",
                        "approval.tamper_detected", "break_glass.granted", "break_glass.access",
                        "encounter.discharged", "discharge.reopened", "discharge.refused",
-                       "security.alert_acknowledged", "patient_request.decided",
+                       "security.alert_acknowledged", "security.alert_handled_manually",
+                       "patient_request.decided",
                        "patient_request.submitted", "consent.changed"}
 ACTION_CAPTIONS = {
     "sign": "The hospital app exchanges {user}'s token for one addressed to the signature "
@@ -57,6 +58,8 @@ ACTION_CAPTIONS = {
                       "decision is written to the EHR by the coordinator and audited.",
     "acknowledge": "Only a physician (discharge:order) may clear a security alert; the "
                    "review is audited with {user}'s name, then the task is retried.",
+    "manual": "The agent stays suspended until IT fixes it. Meanwhile {user} (physicians "
+              "only) does its task through the hospital's usual channels; that is audited.",
     "chat": "{user}'s message goes to the discharge coordinator with {user}'s login token, "
             "addressed to the coordinator only. The coordinator decides what to do.",
     "reopen": "Only a physician (discharge:order) may reopen; drafts nobody signed are "
@@ -116,6 +119,7 @@ def _ask(span: SpanRecord) -> list[Step]:
              "sign": f"{user}: {span.attr('question')}",
              "chat": f"{user}: “{span.attr('question')}”",
              "acknowledge": f"{user} reviews the security alert",
+             "manual": f"{user} takes the task over by hand",
              "decide_request": f"{user}: {span.attr('question')}"}.get(
         action, f"{user}: “{span.attr('question')}”")
     return [_step(span, icon="🧑", node="user", pillar="privilege", status="info", title=title,
