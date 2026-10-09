@@ -12,11 +12,12 @@
 name: hacknc
 
 # The three agents that call the language model (summary, instructions, chart) get the
-# presenter's AWS profile read-only; login/ stays writable because `aws login` refreshes its
-# token there. No other container sees AWS credentials.
+# presenter's AWS profile read-only; login/ and sso/ stay writable because `aws login` and
+# `aws sso login` profiles refresh their token there. No other container sees AWS credentials.
 x-aws-profile: &aws-profile
   - ${HOME}/.aws:/home/app/.aws:ro
   - ${HOME}/.aws/login:/home/app/.aws/login
+  - ${HOME}/.aws/sso:/home/app/.aws/sso
 
 # Shared, NON-secret settings from .env. No secret is listed here: each service below names
 # only the secrets it needs (its own Keycloak client secret, and the demo admin key only where

@@ -22,7 +22,7 @@ DEFAULT_REGION = "us-east-1"
 class ModelChoice:
     provider: Provider
     model_id: str
-    label: str          # shown to students, e.g. "Llama 4 Scout on Bedrock (public endpoint)"
+    label: str          # shown to students, e.g. "gpt-oss-20b on Bedrock (us-east-1, public …)"
     endpoint: str       # "public" | "vpc" | "local"
     model: Model
 
@@ -31,7 +31,9 @@ def friendly_model_name(model_id: str) -> str:
     """'openai.gpt-oss-20b-1:0' -> 'gpt-oss-20b'."""
     known = {"gpt-oss-120b": "gpt-oss-120b", "gpt-oss-20b": "gpt-oss-20b",
              "llama4-scout": "Llama 4 Scout", "llama4-maverick": "Llama 4 Maverick",
-             "claude": "Claude", "nova": "Amazon Nova", "qwen": "Qwen", "llama3": "Llama 3"}
+             "claude-haiku": "Claude Haiku", "claude-sonnet": "Claude Sonnet",
+             "claude-opus": "Claude Opus", "claude": "Claude",
+             "nova": "Amazon Nova", "qwen": "Qwen", "llama3": "Llama 3"}
     lowered = model_id.lower()
     return next((name for key, name in known.items() if key in lowered), model_id)
 

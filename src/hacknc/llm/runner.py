@@ -13,6 +13,7 @@ Collector drops them again.
 
 from __future__ import annotations
 
+import logging
 import time
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -26,6 +27,7 @@ from hacknc.llm import providers
 from hacknc.llm.settings import LlmSettings
 
 tracer = trace.get_tracer(__name__)
+log = logging.getLogger(__name__)
 RULES = "rules"
 
 
@@ -116,6 +118,8 @@ class LlmRunner:
             except Exception as exc:  # noqa: BLE001 - any model failure: fall back
                 # Rebuild next time: a fresh AWS session picks up a new `aws login`.
                 self._choices.pop(provider, None)
+                # The UI shows a shortened reason; the container log keeps the whole message.
+                log.warning("%s failed for %s: %s", choice.label, agent, exc)
                 skipped.append(f"{choice.label}: {_short(exc)}")
                 span.add_event("llm.fallback", {"provider": provider, "reason": skipped[-1]})
                 continue

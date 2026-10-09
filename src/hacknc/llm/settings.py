@@ -49,6 +49,12 @@ class LlmSettings(BaseSettings):
                 chain.append(name)
         return chain
 
+    def models(self) -> str:
+        """The configured model ids in the order they are tried, for the UI."""
+        names = {"bedrock": f"{self.bedrock_model_id} (Bedrock)",
+                 "ollama": f"{self.ollama_model} (Ollama)"}
+        return ", then ".join(names[p] for p in self.chain()) or "none (rules only)"
+
 
 @lru_cache
 def get_llm_settings() -> LlmSettings:
