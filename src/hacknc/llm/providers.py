@@ -84,7 +84,7 @@ def bedrock(settings: LlmSettings) -> ModelChoice:
                                   retries={"max_attempts": 4, "mode": "adaptive"}),
         endpoint_url=settings.bedrock_endpoint_url or None,
         model_id=settings.bedrock_model_id, max_tokens=settings.llm_max_tokens,
-        temperature=0.2, streaming=False,
+        temperature=settings.llm_temperature, streaming=False,
         additional_request_fields=reasoning_fields(settings))
     endpoint = "vpc" if settings.bedrock_endpoint_url else "public"
     return ModelChoice("bedrock", settings.bedrock_model_id,
@@ -96,7 +96,8 @@ def ollama(settings: LlmSettings) -> ModelChoice:
     from strands.models.ollama import OllamaModel
 
     model = OllamaModel(settings.ollama_base_url, model_id=settings.ollama_model,
-                        max_tokens=settings.llm_max_tokens, temperature=0.2,
+                        max_tokens=settings.llm_max_tokens,
+                        temperature=settings.llm_temperature,
                         ollama_client_args={"timeout": settings.llm_timeout_seconds})
     return ModelChoice("ollama", settings.ollama_model,
                        f"{friendly_model_name(settings.ollama_model)} on Ollama (local)",

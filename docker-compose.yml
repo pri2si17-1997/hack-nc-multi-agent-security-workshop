@@ -32,6 +32,8 @@ x-settings: &settings
   LLM_TIMEOUT_SECONDS: "${LLM_TIMEOUT_SECONDS:-30}"
   LLM_MAX_TOKENS: "${LLM_MAX_TOKENS:-4000}"
   LLM_REASONING_EFFORT: "${LLM_REASONING_EFFORT:-low}"
+  # "-" not ":-": an empty LLM_TEMPERATURE in .env must stay empty (= not sent).
+  LLM_TEMPERATURE: "${LLM_TEMPERATURE-0.2}"
   AWS_PROFILE: "${AWS_PROFILE:-default}"
   AWS_REGION: "${AWS_REGION:-}"
   BEDROCK_MODEL_ID: "${BEDROCK_MODEL_ID:-openai.gpt-oss-20b-1:0}"

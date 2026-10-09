@@ -175,3 +175,9 @@ def test_models_lists_configured_ids_in_order() -> None:
     assert settings.models() == \
         "us.anthropic.claude-haiku-4-5-20251001-v1:0 (Bedrock), then qwen2.5:7b (Ollama)"
     assert LlmSettings(llm_provider="rules", llm_fallback="").models() == "none (rules only)"
+
+
+def test_empty_temperature_means_not_sent() -> None:
+    assert LlmSettings().llm_temperature == 0.2
+    assert LlmSettings(llm_temperature="").llm_temperature is None
+    assert LlmSettings(llm_temperature="0.5").llm_temperature == 0.5
