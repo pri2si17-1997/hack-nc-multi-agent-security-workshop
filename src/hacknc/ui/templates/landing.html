@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block main_class %}content-public{% endblock %}
+{% block content %}
+<section class="hero">
+  <p class="eyebrow">HackNC 2026 workshop</p>
+  <h1>Privilege, Trust &amp; Accountability</h1>
+  <p class="lede">Jane Doe is going home after pneumonia. A team of AI agents prepares her
+    discharge: medications, prescriptions, insurance, follow-up and the letter to her family
+    doctor. Log in to watch who may do what, and what leaves the hospital.</p>
+</section>
+
+{% if error %}<div class="alert alert-deny" role="alert">{{ error }}</div>{% endif %}
+
+<section class="persona-grid" aria-label="Choose who to log in as">
+  {% for p in personas %}
+  <article class="card persona">
+    <header class="persona-head">
+      <span class="avatar avatar-lg" aria-hidden="true">{{ '🧑' if p.role == 'patient' else p.initials }}</span>
+      <div>
+        <h2>{{ p.display_name }}</h2>
+        <span class="role role-{{ p.role }}">{{ p.role }}</span>
+        <p class="muted small no-margin">{{ p.blurb }}</p>
+      </div>
+    </header>
+    <ul class="ability-list">
+      {% for c in p.can %}<li class="can">{{ c }}</li>{% endfor %}
+      {% for c in p.cannot %}<li class="cannot">{{ c }}</li>{% endfor %}
+    </ul>
+    {% if p.role == 'patient' %}
+    <form class="persona-pick" method="get" action="/login">
+      <label class="small" for="patient-login">Patient</label>
+      <select id="patient-login" name="persona">
+        {% for username, name, about in patients %}
+        <option value="{{ username }}">{{ name }} · {{ about }}</option>
+        {% endfor %}
+      </select>
+      <button class="btn btn-primary btn-block" type="submit">Log in as this patient</button>
+    </form>
+    {% else %}
+    <a class="btn btn-primary btn-block" href="/login?persona={{ p.username }}">Log in as {{ p.username }}</a>
+    {% endif %}
+  </article>
+  {% endfor %}
+</section>
+<p class="hint">You sign in on Keycloak, the hospital's identity provider. Every demo password is <code>hacknc</code>.</p>
+{% endblock %}

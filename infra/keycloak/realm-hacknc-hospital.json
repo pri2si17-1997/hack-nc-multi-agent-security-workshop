@@ -1,0 +1,1754 @@
+{
+  "realm": "hacknc-hospital",
+  "displayName": "HackNC General Hospital",
+  "enabled": true,
+  "sslRequired": "none",
+  "registrationAllowed": false,
+  "loginWithEmailAllowed": false,
+  "accessTokenLifespan": 900,
+  "roles": {
+    "realm": [
+      {
+        "name": "physician",
+        "description": "Attending physician: full chart, orders discharges, signs prescriptions and summaries"
+      },
+      {
+        "name": "nurse",
+        "description": "Nurse: chart access except sensitive records; cannot order or sign"
+      },
+      {
+        "name": "admin",
+        "description": "Platform admin: demo controls, audit and disclosures; no clinical data"
+      },
+      {
+        "name": "patient",
+        "description": "Patient: the portal, for their own record only (messages, requests, consent)"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "dr.morgana",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Morgana",
+      "lastName": "Pendragon",
+      "email": "dr.morgana@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "physician"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "nurse.gawain",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Gawain",
+      "lastName": "Orkney",
+      "email": "nurse.gawain@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "nurse"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "admin.percival",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Percival",
+      "lastName": "Grail",
+      "email": "admin.percival@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "franchesca.harvey",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Franchesca",
+      "lastName": "Harvey",
+      "email": "franchesca.harvey@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "hobert.lynch",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Hobert",
+      "lastName": "Lynch",
+      "email": "hobert.lynch@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "jane.doe",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "email": "jane.doe@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "jeff.heathcote",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Jeff",
+      "lastName": "Heathcote",
+      "email": "jeff.heathcote@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "kermit.legros",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Kermit",
+      "lastName": "Legros",
+      "email": "kermit.legros@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "luna.sawayn",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Luna",
+      "lastName": "Sawayn",
+      "email": "luna.sawayn@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "mel.doyle",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Mel",
+      "lastName": "Doyle",
+      "email": "mel.doyle@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "merlin.nienow",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Merlin",
+      "lastName": "Nienow",
+      "email": "merlin.nienow@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "nelia.rolfson",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Nelia",
+      "lastName": "Rolfson",
+      "email": "nelia.rolfson@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "norris.dubuque",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Norris",
+      "lastName": "DuBuque",
+      "email": "norris.dubuque@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "oma.runolfsson",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Oma",
+      "lastName": "Runolfsson",
+      "email": "oma.runolfsson@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "tabatha.harber",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Tabatha",
+      "lastName": "Harber",
+      "email": "tabatha.harber@hacknc-hospital.example",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "hacknc",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "patient"
+      ],
+      "requiredActions": []
+    },
+    {
+      "username": "service-account-hospital-ui",
+      "enabled": true,
+      "serviceAccountClientId": "hospital-ui",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-orchestrator",
+      "enabled": true,
+      "serviceAccountClientId": "orchestrator",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-medrec-agent",
+      "enabled": true,
+      "serviceAccountClientId": "medrec-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-summary-agent",
+      "enabled": true,
+      "serviceAccountClientId": "summary-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-prescription-agent",
+      "enabled": true,
+      "serviceAccountClientId": "prescription-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-benefits-agent",
+      "enabled": true,
+      "serviceAccountClientId": "benefits-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-scheduling-agent",
+      "enabled": true,
+      "serviceAccountClientId": "scheduling-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-transitions-agent",
+      "enabled": true,
+      "serviceAccountClientId": "transitions-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-instructions-agent",
+      "enabled": true,
+      "serviceAccountClientId": "instructions-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-chart-agent",
+      "enabled": true,
+      "serviceAccountClientId": "chart-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-portal-agent",
+      "enabled": true,
+      "serviceAccountClientId": "portal-agent",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-ehr-mcp",
+      "enabled": true,
+      "serviceAccountClientId": "ehr-mcp",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-disclosure-mcp",
+      "enabled": true,
+      "serviceAccountClientId": "disclosure-mcp",
+      "realmRoles": []
+    },
+    {
+      "username": "service-account-approval-service",
+      "enabled": true,
+      "serviceAccountClientId": "approval-service",
+      "realmRoles": []
+    }
+  ],
+  "clientScopes": [
+    {
+      "name": "basic",
+      "description": "Subject claim",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "sub",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-sub-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "profile",
+      "description": "Username and name",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "username",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "username",
+            "claim.name": "preferred_username",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "full name",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-full-name-mapper",
+          "consentRequired": false,
+          "config": {
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "roles",
+      "description": "Realm roles in realm_access.roles",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "realm roles",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-realm-role-mapper",
+          "consentRequired": false,
+          "config": {
+            "claim.name": "realm_access.roles",
+            "multivalued": "true",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "agent:delegate",
+      "description": "Let AI agents work on the user's behalf",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "patient:read",
+      "description": "Read patient charts",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "discharge:order",
+      "description": "Order a discharge (physicians only)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "rx:approve",
+      "description": "Sign prescriptions and discharge summaries (physicians only)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "portal:self",
+      "description": "Use the patient portal for your own record (patients only)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "sign:request",
+      "description": "Put a draft in the physician's signature queue",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "portal:write",
+      "description": "Post instructions to the patient portal",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "disclose:prior-auth",
+      "description": "Send a prior-authorization request to the payer",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "disclose:registry",
+      "description": "Query the state controlled-substance registry",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "disclose:prescription",
+      "description": "Send a signed prescription to the patient's pharmacy",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "disclose:scheduling",
+      "description": "Book a follow-up with the patient's family doctor",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "disclose:care-transition",
+      "description": "Send the signed discharge summary to the family doctor",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "approval:request",
+      "description": "Create or fulfil a signature request (gateways only)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "audit:write",
+      "description": "Append events to the audit log (services only)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "audit:read",
+      "description": "Read the audit log",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "task:assign",
+      "description": "Bind an agent to the patient of its current task (coordinator only)",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": []
+    },
+    {
+      "name": "aud-hospital-ui",
+      "description": "Lets the requesting client obtain tokens addressed to 'hospital-ui'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience hospital-ui",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "hospital-ui",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-orchestrator",
+      "description": "Lets the requesting client obtain tokens addressed to 'orchestrator'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience orchestrator",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "orchestrator",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-medrec-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'medrec-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience medrec-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "medrec-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-summary-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'summary-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience summary-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "summary-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-prescription-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'prescription-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience prescription-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "prescription-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-benefits-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'benefits-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience benefits-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "benefits-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-scheduling-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'scheduling-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience scheduling-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "scheduling-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-transitions-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'transitions-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience transitions-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "transitions-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-instructions-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'instructions-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience instructions-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "instructions-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-chart-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'chart-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience chart-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "chart-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-portal-agent",
+      "description": "Lets the requesting client obtain tokens addressed to 'portal-agent'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience portal-agent",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "portal-agent",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-ehr-mcp",
+      "description": "Lets the requesting client obtain tokens addressed to 'ehr-mcp'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience ehr-mcp",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "ehr-mcp",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-disclosure-mcp",
+      "description": "Lets the requesting client obtain tokens addressed to 'disclosure-mcp'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience disclosure-mcp",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "disclosure-mcp",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-approval-service",
+      "description": "Lets the requesting client obtain tokens addressed to 'approval-service'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience approval-service",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "approval-service",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-audit-service",
+      "description": "Lets the requesting client obtain tokens addressed to 'audit-service'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience audit-service",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "audit-service",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-payer",
+      "description": "Lets the requesting client obtain tokens addressed to 'payer'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience payer",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "payer",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-retail-pharmacy",
+      "description": "Lets the requesting client obtain tokens addressed to 'retail-pharmacy'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience retail-pharmacy",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "retail-pharmacy",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-pcp-clinic",
+      "description": "Lets the requesting client obtain tokens addressed to 'pcp-clinic'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience pcp-clinic",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "pcp-clinic",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    },
+    {
+      "name": "aud-nc-csrs",
+      "description": "Lets the requesting client obtain tokens addressed to 'nc-csrs'",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "false",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "audience nc-csrs",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "nc-csrs",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "scopeMappings": [
+    {
+      "clientScope": "agent:delegate",
+      "roles": [
+        "physician",
+        "nurse"
+      ]
+    },
+    {
+      "clientScope": "patient:read",
+      "roles": [
+        "physician",
+        "nurse"
+      ]
+    },
+    {
+      "clientScope": "discharge:order",
+      "roles": [
+        "physician"
+      ]
+    },
+    {
+      "clientScope": "rx:approve",
+      "roles": [
+        "physician"
+      ]
+    },
+    {
+      "clientScope": "sign:request",
+      "roles": [
+        "physician"
+      ]
+    },
+    {
+      "clientScope": "portal:write",
+      "roles": [
+        "physician",
+        "nurse"
+      ]
+    },
+    {
+      "clientScope": "approval:request",
+      "roles": [
+        "physician",
+        "nurse"
+      ]
+    },
+    {
+      "clientScope": "portal:self",
+      "roles": [
+        "patient"
+      ]
+    },
+    {
+      "clientScope": "disclose:prior-auth",
+      "roles": [
+        "physician"
+      ]
+    },
+    {
+      "clientScope": "disclose:registry",
+      "roles": [
+        "physician"
+      ]
+    },
+    {
+      "clientScope": "disclose:prescription",
+      "roles": [
+        "physician"
+      ]
+    },
+    {
+      "clientScope": "disclose:scheduling",
+      "roles": [
+        "physician"
+      ]
+    },
+    {
+      "clientScope": "disclose:care-transition",
+      "roles": [
+        "physician"
+      ]
+    }
+  ],
+  "defaultDefaultClientScopes": [
+    "basic",
+    "profile",
+    "roles"
+  ],
+  "defaultOptionalClientScopes": [],
+  "clients": [
+    {
+      "clientId": "hospital-ui",
+      "name": "hospital-ui",
+      "description": "Browser app clinicians and admins log into (Authorization Code + PKCE)",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "hospital-ui-demo-secret",
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "http://localhost:8000/*",
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles",
+        "aud-orchestrator",
+        "aud-hospital-ui"
+      ],
+      "optionalClientScopes": [
+        "agent:delegate",
+        "patient:read",
+        "discharge:order",
+        "rx:approve",
+        "portal:self",
+        "aud-approval-service",
+        "aud-audit-service",
+        "aud-ehr-mcp",
+        "audit:read",
+        "audit:write"
+      ],
+      "redirectUris": [
+        "http://localhost:8000/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8000"
+      ]
+    },
+    {
+      "clientId": "workshop-cli",
+      "name": "Workshop CLI (test harness only)",
+      "description": "DEMO/TEST ONLY: password grant so scripts can log in as a user without a browser. Never do this in production.",
+      "enabled": true,
+      "publicClient": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles",
+        "aud-orchestrator"
+      ],
+      "optionalClientScopes": [
+        "agent:delegate",
+        "patient:read",
+        "discharge:order",
+        "rx:approve",
+        "portal:self"
+      ]
+    },
+    {
+      "clientId": "orchestrator",
+      "name": "orchestrator",
+      "description": "Discharge coordinator: plans the tasks and delegates to agents. No data access.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "orchestrator-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-medrec-agent",
+        "aud-summary-agent",
+        "aud-prescription-agent",
+        "aud-benefits-agent",
+        "aud-scheduling-agent",
+        "aud-transitions-agent",
+        "aud-instructions-agent",
+        "aud-chart-agent",
+        "aud-portal-agent",
+        "disclose:care-transition",
+        "disclose:prescription",
+        "disclose:prior-auth",
+        "disclose:registry",
+        "disclose:scheduling",
+        "patient:read",
+        "portal:self",
+        "portal:write",
+        "sign:request",
+        "aud-audit-service",
+        "audit:write",
+        "aud-ehr-mcp",
+        "discharge:order",
+        "task:assign",
+        "audit:read"
+      ]
+    },
+    {
+      "clientId": "medrec-agent",
+      "name": "medrec-agent",
+      "description": "Medication reconciliation: home vs hospital vs discharge meds.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "medrec-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-ehr-mcp",
+        "patient:read",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "summary-agent",
+      "name": "summary-agent",
+      "description": "Drafts the discharge summary for the family doctor.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "summary-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-ehr-mcp",
+        "patient:read",
+        "sign:request",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "prescription-agent",
+      "name": "prescription-agent",
+      "description": "Prepares discharge prescriptions; controlled ones need a signature.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "prescription-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-disclosure-mcp",
+        "aud-ehr-mcp",
+        "patient:read",
+        "sign:request",
+        "disclose:registry",
+        "disclose:prescription",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "benefits-agent",
+      "name": "benefits-agent",
+      "description": "Coverage and prior authorization with the payer.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "benefits-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-disclosure-mcp",
+        "aud-ehr-mcp",
+        "patient:read",
+        "disclose:prior-auth",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "scheduling-agent",
+      "name": "scheduling-agent",
+      "description": "Books the follow-up with the family doctor.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "scheduling-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-disclosure-mcp",
+        "aud-ehr-mcp",
+        "patient:read",
+        "disclose:scheduling",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "transitions-agent",
+      "name": "transitions-agent",
+      "description": "Sends the signed discharge summary to the family doctor.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "transitions-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-disclosure-mcp",
+        "disclose:care-transition",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "instructions-agent",
+      "name": "instructions-agent",
+      "description": "Writes plain-language discharge instructions for the patient.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "instructions-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-ehr-mcp",
+        "patient:read",
+        "portal:write",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "chart-agent",
+      "name": "chart-agent",
+      "description": "Answers clinicians' questions about a patient (chat box).",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "chart-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-ehr-mcp",
+        "patient:read",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "portal-agent",
+      "name": "portal-agent",
+      "description": "Triage of patient portal messages; acts for the patient, decides nothing.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "portal-agent-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-ehr-mcp",
+        "portal:self",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "ehr-mcp",
+      "name": "ehr-mcp",
+      "description": "EHR gateway: the only way agents read patient data.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "ehr-mcp-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-approval-service",
+        "approval:request",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "disclosure-mcp",
+      "name": "disclosure-mcp",
+      "description": "Disclosure gateway: everything that leaves the hospital.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "disclosure-mcp-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-payer",
+        "aud-retail-pharmacy",
+        "aud-pcp-clinic",
+        "aud-nc-csrs",
+        "aud-approval-service",
+        "approval:request",
+        "aud-ehr-mcp",
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "approval-service",
+      "name": "approval-service",
+      "description": "Physician signature queue.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "approval-service-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": true,
+      "fullScopeAllowed": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "false"
+      },
+      "defaultClientScopes": [
+        "basic",
+        "profile",
+        "roles"
+      ],
+      "optionalClientScopes": [
+        "aud-audit-service",
+        "audit:write"
+      ]
+    },
+    {
+      "clientId": "audit-service",
+      "name": "audit-service",
+      "description": "Hash-chained audit log (resource server only).",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "audit-service-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "false"
+      },
+      "defaultClientScopes": [],
+      "optionalClientScopes": []
+    },
+    {
+      "clientId": "payer",
+      "name": "payer",
+      "description": "Blue Cross Blue Shield (mock payer): outside organization, receives data only.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "payer-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "false"
+      },
+      "defaultClientScopes": [],
+      "optionalClientScopes": []
+    },
+    {
+      "clientId": "retail-pharmacy",
+      "name": "retail-pharmacy",
+      "description": "Main Street Pharmacy (mock retail pharmacy): outside organization, receives data only.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "retail-pharmacy-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "false"
+      },
+      "defaultClientScopes": [],
+      "optionalClientScopes": []
+    },
+    {
+      "clientId": "pcp-clinic",
+      "name": "pcp-clinic",
+      "description": "Maple Family Medicine (mock family-doctor clinic): outside organization, receives data only.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "pcp-clinic-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "false"
+      },
+      "defaultClientScopes": [],
+      "optionalClientScopes": []
+    },
+    {
+      "clientId": "nc-csrs",
+      "name": "nc-csrs",
+      "description": "NC Controlled Substances Reporting System (mock state registry): outside organization, receives data only.",
+      "enabled": true,
+      "publicClient": false,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "nc-csrs-demo-secret",
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "serviceAccountsEnabled": false,
+      "fullScopeAllowed": false,
+      "protocol": "openid-connect",
+      "attributes": {
+        "standard.token.exchange.enabled": "false"
+      },
+      "defaultClientScopes": [],
+      "optionalClientScopes": []
+    }
+  ]
+}

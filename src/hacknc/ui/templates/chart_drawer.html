@@ -1,0 +1,112 @@
+{# The chart, as a drawer on the ward screen (GET /ward/{id}/chart returns this fragment). #}
+{% macro badges(resource) -%}
+  {% for label in labels_of(resource) %}<span class="label-badge" title="Sensitive: {{ label }}">🔒 {{ label }}</span>{% endfor %}
+  {% for tag in resource.get('meta', {}).get('tag', []) if tag.code == 'contains-prompt-injection' %}<span class="label-badge label-danger">⚠ prompt injection</span>{% endfor %}
+{%- endmacro %}
+{% macro locked(part) -%}
+  {% for w in part.withheld %}<li class="locked">🔒 {{ w.type }} withheld: {{ w.reason }}</li>{% endfor %}
+{%- endmacro %}
+<header class="drawer-head">
+  <div>
+    <h2>{{ patient.name }} <span class="muted chart-sub">chart</span></h2>
+    <p class="lede">{{ patient.age }} y · {{ patient.gender }} · born {{ patient.birthDate }} · MRN {{ patient.mrn }}
+      {% if admission %}<br><strong>Admitted {{ admission.period.start[:10] }}</strong> · {{ admission.reason }} · {{ admission.location }} · {{ admission.attending }}{% endif %}
+      {% if patient.discharged %}<br><span class="ok-text">🏠 Discharged {{ patient.discharged.disposition }} {{ patient.discharged.at[:16].replace("T", " ") }} · ordered by {{ patient.discharged.ordered_by }} · recorded by {{ patient.discharged.recorded_by }}</span>{% endif %}</p>
+  </div>
+  <button class="btn btn-ghost btn-sm drawer-close" type="button" data-close-drawer aria-label="Close chart">✕</button>
+</header>
+<nav class="drawer-tabs" role="tablist">
+  <button type="button" role="tab" class="active" data-tab="chart">Chart</button>
+  <button type="button" role="tab" data-tab="access">Access log</button>
+</nav>
+<div class="drawer-panel" data-panel="access" hidden>
+  <p class="muted small">Every access to {{ patient.name }}'s record, by people and by agents, from the hash-chained audit trail: who, through which agents, what, and the decision.</p>
+  <ol class="access-log" id="access-log" data-patient="{{ patient.id }}"><li class="muted">Loading…</li></ol>
+</div>
+<div class="drawer-panel" data-panel="chart">
+
+{% if withheld %}
+<div class="alert alert-locked">🔒 {{ withheld | length }} record(s) are not shown to you. The EHR gateway withheld them based on your role; physicians and break-the-glass grants can see them.
+  {% if can_break_glass %}<button class="btn btn-danger btn-sm" type="button" data-break-glass="{{ patient.id }}">Break the glass</button>
+  <span class="small">Emergency access: a written justification is required, it lasts 15 minutes, and every access is flagged for review.</span>{% endif %}</div>
+{% endif %}
+<p class="muted small">Loaded through the EHR gateway with <em>your own</em> token, exactly like an agent would be, minus the delegation. Sensitivity labels (🔒) are FHIR security labels on the records.</p>
+
+<div class="chart-grid">
+  <section class="card">
+    <h2 class="section-label">Active problems</h2>
+    <ul class="chart-list">
+      {% for c in summary.active_conditions %}
+      <li><span>{{ c.code.text }}</span> {% if c.code.coding and c.code.coding[0].code %}<code class="muted">{{ c.code.coding[0].code }}</code>{% endif %} {{ badges(c) }}</li>
+      {% endfor %}
+      {{ locked(summary) }}
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="section-label">Allergies</h2>
+    <ul class="chart-list">
+      {% for a in allergies.allergies %}<li><strong class="deny-text">{{ a.substance }}</strong> · {{ a.reaction }} ({{ a.severity }})</li>{% else %}<li class="muted">None documented</li>{% endfor %}
+    </ul>
+    <h2 class="section-label section-gap">Discharge plan</h2>
+    {% if admission and admission.dischargePlan %}
+    {% set plan = admission.dischargePlan %}
+    <ul class="chart-list">
+      {% for m in plan.medications %}<li><strong>{{ m.action|capitalize }}</strong> {{ m.drug }} {{ m.dose or '' }}{% if m.sig %} · {{ m.sig }}{% endif %}{% if m.reason %} <span class="muted small">({{ m.reason }})</span>{% endif %}</li>{% endfor %}
+      {% for e in plan.equipment %}<li><strong>Equipment</strong> {{ e.item }} · {{ e.detail }}</li>{% endfor %}
+      {% if plan.followUp %}<li><strong>Follow-up</strong> {{ plan.followUp.specialty|capitalize }} within {{ plan.followUp.within_days }} days{% if plan.followUp.note %}; {{ plan.followUp.note }}{% endif %}</li>{% endif %}
+    </ul>
+    {% else %}<p class="muted">No active admission.</p>{% endif %}
+  </section>
+
+  <section class="card span-2">
+    <h2 class="section-label">Medications</h2>
+    <table class="chart-table">
+      <thead><tr><th>Medication</th><th>Where</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody>
+        {% for m in meds.medications %}
+        <tr>
+          <td>{{ m.medication.text }} {{ badges(m) }}{% if m.controlledSchedule %} <span class="chip chip-warn">{{ m.controlledSchedule }}</span>{% endif %}</td>
+          <td>{{ m.category }}</td>
+          <td>{{ m.status }}</td>
+          <td class="muted small">{{ m.holdReason or m.dischargeAction or m.supplyNote or '' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <ul class="chart-list">{{ locked(meds) }}</ul>
+  </section>
+
+  <section class="card">
+    <h2 class="section-label">Results &amp; vitals</h2>
+    <ul class="chart-list">
+      {% for o in observations.observations[:12] %}
+      <li><span>{{ o.code.text }}</span>: <strong>{{ o.value }}</strong> <span class="muted small">{{ (o.effectiveDateTime or '')[:10] }}</span>
+        {% if o.interpretation %}<div class="muted small">{{ o.interpretation }}</div>{% endif %}</li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2 class="section-label">Patient portal messages</h2>
+    <ul class="chart-list">
+      {% for m in messages.messages %}
+      <li><div class="muted small">{{ m.sent[:16] | replace('T', ' ') }} · {{ m.sender }} {{ badges(m) }}</div><div class="message-text">{{ m.text }}</div></li>
+      {% else %}<li class="muted">No messages.</li>{% endfor %}
+      {% for m in messages.posted_instructions %}
+      <li class="posted"><div class="muted small">{{ m.sent[:16] | replace('T', ' ') }} · {{ m.sender }}</div><div class="message-text">{{ m.text }}</div></li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card span-2">
+    <h2 class="section-label">Clinical notes</h2>
+    <ul class="chart-list notes">
+      {% for n in notes.notes %}
+      <li><div><strong>{{ n.type.text }}</strong> · {{ n.date }} · <span class="muted">{{ n.author }}</span> {{ badges(n) }}</div><div class="message-text">{{ n.text }}</div></li>
+      {% endfor %}
+      {{ locked(notes) }}
+    </ul>
+  </section>
+</div>
+</div>

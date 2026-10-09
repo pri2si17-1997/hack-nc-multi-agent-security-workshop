@@ -1,0 +1,530 @@
+# HackNC 2026 — Securing Multi-Agent AI in Healthcare
+#
+# Identity (Keycloak), policy (OPA), observability (OTel Collector,
+# Tempo, Loki, Grafana), the hospital UI, the discharge coordinator and eight agents, the EHR
+# gateway (reads), the disclosure gateway (everything leaving the hospital), mock outside
+# organizations, the signature queue (approval service) and the audit service.
+#
+#   make up      start everything
+#   make down    stop (keeps nothing important: realm is re-imported on every start)
+#   make reset   stop and wipe trace/log volumes
+
+name: hacknc
+
+# The three agents that call the language model (summary, instructions, chart) get the
+# presenter's AWS profile read-only; login/ stays writable because `aws login` refreshes its
+# token there. No other container sees AWS credentials.
+x-aws-profile: &aws-profile
+  - ${HOME}/.aws:/home/app/.aws:ro
+  - ${HOME}/.aws/login:/home/app/.aws/login
+
+services:
+  # ---------------------------------------------------------------- identity
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.7.5
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USER:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      # Every token's issuer is http://localhost:8080/... no matter who asks,
+      # while containers can still reach Keycloak internally at http://keycloak:8080.
+      KC_HOSTNAME: http://localhost:8080
+      KC_HOSTNAME_BACKCHANNEL_DYNAMIC: "true"
+      KC_HEALTH_ENABLED: "true"
+    volumes:
+      - ./infra/keycloak/realm-hacknc-hospital.json:/opt/keycloak/data/import/realm-hacknc-hospital.json:ro
+    ports:
+      - "8080:8080"
+    healthcheck:
+      # The Keycloak image has no curl, so talk HTTP to the management port by hand.
+      test: ["CMD-SHELL", "exec 3<>/dev/tcp/127.0.0.1/9000 && printf 'GET /health/ready HTTP/1.1\\r\\nHost: localhost\\r\\nConnection: close\\r\\n\\r\\n' >&3 && grep -q UP <&3"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+      start_period: 20s
+
+  # ------------------------------------------------------------------ policy
+  opa:
+    image: openpolicyagent/opa:1.21.1
+    env_file: .env   # provides OPA_LOG_TOKEN to config.yaml
+    command:
+      - run
+      - --server
+      - --addr=0.0.0.0:8181
+      - --config-file=/config/config.yaml
+      - --watch            # hot-reload policies when files change
+      - /policies
+    volumes:
+      - ./infra/opa/config.yaml:/config/config.yaml:ro
+      - ./infra/opa/policies:/policies:ro
+    ports:
+      - "8181:8181"
+
+  # ----------------------------------------------------------- observability
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.161.0
+    command: ["--config=/etc/otelcol/config.yaml"]
+    volumes:
+      - ./infra/observability/otel-collector.yaml:/etc/otelcol/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    depends_on: [tempo, loki]
+
+  tempo:
+    image: grafana/tempo:3.1.0
+    command: ["-target=all", "-config.file=/etc/tempo.yaml"]
+    volumes:
+      - ./infra/observability/tempo.yaml:/etc/tempo.yaml:ro
+      - tempo-data:/var/tempo
+    ports:
+      - "3200:3200"
+
+  loki:
+    image: grafana/loki:3.7.8
+    command: ["-config.file=/etc/loki/config.yaml"]
+    volumes:
+      - ./infra/observability/loki.yaml:/etc/loki/config.yaml:ro
+      - loki-data:/loki
+    ports:
+      - "3100:3100"
+
+  grafana:
+    image: grafana/grafana:13.2.3
+    environment:
+      # Demo only: no login screen, everyone is admin.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: Admin
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+    volumes:
+      - ./infra/observability/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./infra/observability/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    ports:
+      - "3000:3000"
+    depends_on: [tempo, loki]
+
+  # ------------------------------------------------------------ our services
+  audit-service:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.audit_service"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      AUDIT_DB_PATH: /data/audit.db
+    volumes:
+      - audit-data:/data
+    ports:
+      - "8006:8006"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8006/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  approval-service:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.approval_service"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OPA_URL: http://opa:8181
+      AUDIT_URL: http://audit-service:8006
+      APPROVAL_DB_PATH: /data/approvals.db
+    volumes:
+      - approval-data:/data
+    ports:
+      - "8007:8007"
+    depends_on:
+      ui:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+      opa:
+        condition: service_started   # every decision goes to OPA
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8007/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ------------------------------------------------------------- agents
+  orchestrator:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.orchestrator"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      APPROVAL_URL: http://approval-service:8007
+      AUDIT_URL: http://audit-service:8006
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+    volumes: *aws-profile   # the coordinator is a Strands agent too
+    ports:
+      - "8001:8001"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8001/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  medrec-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "medrec-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8002
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8002:8002"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8002/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  summary-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "summary-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8003
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8003:8003"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8003/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  prescription-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "prescription-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8004
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8004:8004"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8004/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  benefits-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "benefits-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8005
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8005:8005"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8005/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  scheduling-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "scheduling-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8012
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8012:8012"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8012/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  transitions-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "transitions-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8013
+      AUDIT_URL: http://audit-service:8006
+    ports:
+      - "8013:8013"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8013/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  instructions-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "instructions-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8014
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8014:8014"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8014/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  chart-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "chart-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8015
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8015:8015"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8015/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  portal-agent:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.agents", "portal-agent"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      DISCLOSURE_MCP_URL: http://disclosure-mcp:8011/mcp
+      APPROVAL_URL: http://approval-service:8007
+      AGENT_PUBLIC_URL: http://localhost:8016
+      AUDIT_URL: http://audit-service:8006
+    volumes: *aws-profile
+    ports:
+      - "8016:8016"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8016/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # ------------------------------------------------- gateways and partners
+  disclosure-mcp:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.disclosure_mcp"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OPA_URL: http://opa:8181
+      PARTNERS_URL: http://partners:8020
+      EHR_DATA_DIR: /app/data
+      DISCLOSURE_MCP_PUBLIC_URL: http://localhost:8011
+      APPROVAL_URL: http://approval-service:8007
+      AUDIT_URL: http://audit-service:8006
+    volumes:
+      - ./data/curated:/app/data/curated:ro
+      - ./data/overlay:/app/data/overlay:ro
+    ports:
+      - "8011:8011"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+      opa:
+        condition: service_started   # every decision goes to OPA
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8011/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  partners:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.partners"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+
+    ports:
+      - "8020:8020"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8020/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ehr-mcp:
+    image: hacknc-app:dev
+    command: ["python", "-m", "hacknc.ehr_mcp"]
+    env_file: .env
+    environment:
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      OPA_URL: http://opa:8181
+      APPROVAL_URL: http://approval-service:8007
+      AUDIT_URL: http://audit-service:8006
+      EHR_DATA_DIR: /app/data
+      EHR_MCP_PUBLIC_URL: http://localhost:8010
+    volumes:
+      # Synthetic patients (curated Synthea + workshop overlay), read-only.
+      - ./data/curated:/app/data/curated:ro
+      - ./data/overlay:/app/data/overlay:ro
+    ports:
+      - "8010:8010"
+    depends_on:
+      ui:
+        condition: service_started   # ui builds the shared image
+      keycloak:
+        condition: service_healthy
+      opa:
+        condition: service_started   # every decision goes to OPA
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8010/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ui:
+    build: .
+    image: hacknc-app:dev   # the one image every Python service runs (see Makefile `build`)
+    command: ["python", "-m", "hacknc.ui"]
+    env_file: .env
+    environment:
+      # Inside Docker, reach Keycloak and the Collector by service name.
+      # Token issuer stays http://localhost:8080/... (see keycloak service).
+      KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
+      OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
+      APPROVAL_URL: http://approval-service:8007
+      AUDIT_URL: http://audit-service:8006
+      ORCHESTRATOR_URL: http://orchestrator:8001
+      EHR_MCP_URL: http://ehr-mcp:8010/mcp
+      PARTNERS_URL: http://partners:8020
+    ports:
+      - "8000:8000"
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/healthz')"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  tempo-data:
+  loki-data:
+  audit-data:
+  approval-data:

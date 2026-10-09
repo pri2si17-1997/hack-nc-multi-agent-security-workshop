@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Admin console · HackNC General Hospital{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Controls</h1>
+    <p class="lede">Shape the demo: switch agents and outside organizations on or off, and stage
+      attacks. Changes apply to the next action and are written to the audit log. This console
+      shows no clinical data.</p>
+  </div>
+  <div class="actions">
+    <button class="btn btn-ghost" id="reset" type="button">Reset demo</button>
+    <button class="btn btn-primary" id="prepare-finale" type="button"
+            title="Reset, AI model on, every agent and partner on, only the Wrong patient scenario staged">Prepare the finale</button>
+  </div>
+</header>
+<div class="alert" id="admin-result" hidden></div>
+{% if not store_ok %}<div class="alert alert-deny">The flag store (approval service) is unreachable.</div>{% endif %}
+
+<div class="admin-grid">
+  {% for group in groups %}
+  <section class="card">
+    <h2 class="section-label">{{ group.title }}</h2>
+    <p class="muted small">{{ group.hint }}</p>
+    <ul class="control-list">
+      {% for item in group['items'] %}
+      <li class="control">
+        <div>
+          <h3>{% if item.key.startswith('agent.') %}🤖 {% endif %}{{ item.label }}</h3>
+          <p class="muted small">{{ item.description }}</p>
+        </div>
+        <label class="switch {{ 'switch-scenario' if item.key.startswith('scenario') or item.key == 'break_glass_enabled' }}">
+          <input type="checkbox" data-flag="{{ item.key }}" {% if item.on %}checked{% endif %}><span></span>
+        </label>
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+  {% endfor %}
+  <section class="card">
+    <h2 class="section-label">System</h2>
+    <ul class="link-list">
+      <li><a href="{{ links.keycloak }}" target="_blank" rel="noopener">Keycloak admin ↗</a> <span class="muted small">users, agents, scopes (admin / admin)</span></li>
+      <li><a href="{{ links.grafana }}/d/hacknc-security-audit" target="_blank" rel="noopener">Grafana: Security &amp; Audit ↗</a></li>
+      <li><a href="{{ links.opa }}/v1/policies" target="_blank" rel="noopener">OPA policies ↗</a></li>
+      <li><a href="/admin/audit">Audit trail &amp; disclosures</a></li>
+      <li><a href="/admin/incident">Incident report</a> <span class="muted small">the five questions, for one patient</span></li>
+    </ul>
+    <p class="muted small">Reset demo empties the signature queue and checklists, makes partners
+      forget what they received and removes posted instructions. The tamper-evident audit chain is
+      never reset from here: use <code>make reset-audit</code>. <strong>Prepare the finale</strong>
+      resets too, then turns the AI model, every agent and partner on, and stages only
+      <em>Wrong patient</em>; the incident report starts from that moment.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="{{ static('admin.js') }}" defer></script>{% endblock %}

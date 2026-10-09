@@ -1,0 +1,67 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "hacknc"
+version = "0.1.0"
+description = "HackNC 2026 workshop: securing multi-agent AI systems in healthcare"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi>=0.142",
+    "uvicorn>=0.37",
+    "jinja2>=3.1",
+    "itsdangerous>=2.2",
+    "httpx>=0.28",
+    # Strands supports mcp < 2.2; 2.1 has every API we use (MCPServer, Client, mcp_types).
+    "mcp>=2.1,<2.2",
+    "strands-agents[ollama]>=1.57,<2",
+    "boto3[crt]>=1.42",          # crt: needed for `aws login` credentials
+    "pyjwt[crypto]>=2.10",
+    "pydantic>=2.11",
+    "pydantic-settings>=2.10",
+    "python-dotenv>=1.1",
+    "rich>=14.0",
+    "opentelemetry-api>=1.37",
+    "opentelemetry-sdk>=1.37",
+    "opentelemetry-exporter-otlp-proto-http>=1.37",
+    "opentelemetry-instrumentation-httpx>=0.58b0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.4",
+    "anyio>=4.10",
+    "pytest-cov>=6.0",
+    "ruff>=0.13",
+]
+
+[project.scripts]
+hacknc-token-walkthrough = "hacknc.tools.token_walkthrough:main"
+hacknc-ui = "hacknc.ui.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/hacknc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra -m 'not integration'"
+filterwarnings = [
+    # starlette's TestClient nudges towards httpx2; harmless for our tests.
+    "ignore:Using `httpx` with `starlette.testclient` is deprecated",
+]
+markers = [
+    "integration: needs the docker compose stack running (run with: make test-integration)",
+]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency-injection style puts these calls in argument defaults on purpose.
+extend-immutable-calls = ["fastapi.Depends", "fastapi.Query", "fastapi.Header"]

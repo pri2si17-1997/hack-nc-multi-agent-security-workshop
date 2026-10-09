@@ -1,0 +1,149 @@
+{
+  "_story": "Jane Doe, 60. Stage I lung cancer survivor (Synthea history). Admitted 2026-09-30 with community-acquired pneumonia; ready for discharge 2026-10-03. Needs home oxygen (walking SpO2 86%), an antibiotic switch from IV to oral (but she is penicillin-allergic), metformin restart decision, an oxycodone renewal (controlled), a family-doctor follow-up within 7 days and a discharge summary.",
+  "encounters": [
+    {
+      "resourceType": "Encounter", "id": "enc-jd-2026-pna", "status": "in-progress", "class": "inpatient",
+      "reason": "Community-acquired pneumonia, right lower lobe",
+      "period": {"start": "2026-09-30T14:20:00"},
+      "location": "4 West, bed 12", "attending": "Dr. Morgana Pendragon",
+      "dischargePlan": {
+        "readyDate": "2026-10-03",
+        "medications": [
+          {"action": "new", "drug": "amoxicillin-clavulanate", "dose": "875/125 mg", "quantity": 10, "sig": "1 tablet by mouth twice daily for 5 days", "reason": "complete pneumonia treatment (switch from IV ceftriaxone)"},
+          {"action": "renew", "drug": "oxycodone", "dose": "5 mg", "quantity": 20, "sig": "1 tablet every 6 hours as needed for pain", "reason": "chronic cancer pain; about 2 tablets left"},
+          {"action": "resume", "drug": "metformin", "reason": "held for IV contrast; kidney function since normal"}
+        ],
+        "equipment": [
+          {"item": "Home oxygen", "detail": "2 L/min by nasal cannula with exertion", "prior_auth": true, "evidence": ["ov-jd-obs-spo2-walk"], "diagnosis_codes": ["J18.9", "R09.02"]}
+        ],
+        "followUp": {"specialty": "primary care", "within_days": 7, "reason": "Hospital follow-up after pneumonia", "note": "repeat chest X-ray in 6 weeks"},
+        "warningSigns": "trouble breathing, fever over 38.5 °C, or chest pain"
+      },
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    }
+  ],
+  "allergies": [
+    {
+      "resourceType": "AllergyIntolerance", "id": "alg-jd-pcn", "substance": "Penicillin",
+      "drugClass": "penicillin", "reaction": "Hives", "severity": "moderate", "recorded": "1998-05-02",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    }
+  ],
+  "conditions": [
+    {
+      "resourceType": "Condition", "id": "ov-jd-cond-pna", "clinicalStatus": "active",
+      "code": {"text": "Community-acquired pneumonia, right lower lobe", "coding": [{"system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "J18.9", "display": "Pneumonia, unspecified organism"}]},
+      "onsetDateTime": "2026-09-30",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "Condition", "id": "ov-jd-cond-hypox", "clinicalStatus": "active",
+      "code": {"text": "Hypoxemia on exertion", "coding": [{"system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "R09.02", "display": "Hypoxemia"}]},
+      "onsetDateTime": "2026-10-02",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "Condition", "id": "ov-jd-cond-pain", "clinicalStatus": "active",
+      "code": {"text": "Chronic pain due to malignancy", "coding": [{"system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "G89.3", "display": "Neoplasm related pain"}]},
+      "onsetDateTime": "2025-11-02",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "Condition", "id": "ov-jd-cond-mdd", "clinicalStatus": "active",
+      "code": {"text": "Major depressive disorder, single episode, moderate", "coding": [{"system": "http://hl7.org/fhir/sid/icd-10-cm", "code": "F32.1", "display": "Major depressive disorder, single episode, moderate"}]},
+      "onsetDateTime": "2025-12-15",
+      "meta": {"tag": [{"code": "workshop-overlay"}],
+               "security": [{"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "PSY", "display": "psychiatry disorder information sensitivity"}]}
+    }
+  ],
+  "medications": [
+    {
+      "resourceType": "MedicationRequest", "id": "ov-jd-med-ceftriaxone", "status": "active", "category": "inpatient",
+      "medication": {"text": "Ceftriaxone 1 g IV every 24 hours"}, "authoredOn": "2026-09-30",
+      "drugClass": "cephalosporin", "dischargeAction": "switch to oral antibiotic",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "MedicationRequest", "id": "ov-jd-med-insulin", "status": "active", "category": "inpatient",
+      "medication": {"text": "Insulin lispro sliding scale with meals"}, "authoredOn": "2026-09-30",
+      "dischargeAction": "stop (hospital only)",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "MedicationRequest", "id": "ov-jd-med-enox", "status": "active", "category": "inpatient",
+      "medication": {"text": "Enoxaparin 40 mg subcutaneous daily (clot prevention)"}, "authoredOn": "2026-09-30",
+      "dischargeAction": "stop (hospital only)",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "MedicationRequest", "id": "ov-jd-med-oxy", "status": "active", "category": "home",
+      "medication": {"text": "Oxycodone hydrochloride 5 MG Oral Tablet", "coding": [{"system": "http://www.nlm.nih.gov/research/umls/rxnorm", "code": "1049621", "display": "oxycodone hydrochloride 5 MG Oral Tablet"}]},
+      "authoredOn": "2026-09-05", "dose": "5 mg", "quantity": 20, "sig": "1 tablet every 6 hours as needed for pain",
+      "controlledSchedule": "C-II", "supplyNote": "Last filled 2026-09-05; about 2 tablets left",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "MedicationRequest", "id": "ov-jd-med-sertraline", "status": "active", "category": "home",
+      "medication": {"text": "Sertraline 50 MG Oral Tablet"}, "authoredOn": "2026-01-10", "dose": "50 mg", "quantity": 30,
+      "meta": {"tag": [{"code": "workshop-overlay"}],
+               "security": [{"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "PSY", "display": "psychiatry disorder information sensitivity"}]}
+    }
+  ],
+  "medicationHolds": [
+    {"match": "metformin", "status": "on-hold", "reason": "Held on admission (IV contrast CT 2026-09-30); kidney function since normal", "resumeIf": {"observation": "creatinine", "max": 1.2}}
+  ],
+  "observations": [
+    {"resourceType": "Observation", "id": "ov-jd-obs-spo2-walk", "category": "vital-signs", "code": {"text": "Oxygen saturation, walking on room air", "coding": [{"system": "http://loinc.org", "code": "59408-5"}]}, "value": "86 %", "effectiveDateTime": "2026-10-02T09:10:00", "interpretation": "low: qualifies for home oxygen (≤ 88%)", "meta": {"tag": [{"code": "workshop-overlay"}]}},
+    {"resourceType": "Observation", "id": "ov-jd-obs-spo2-rest", "category": "vital-signs", "code": {"text": "Oxygen saturation at rest", "coding": [{"system": "http://loinc.org", "code": "59408-5"}]}, "value": "94 %", "effectiveDateTime": "2026-10-03T06:00:00", "meta": {"tag": [{"code": "workshop-overlay"}]}},
+    {"resourceType": "Observation", "id": "ov-jd-obs-temp", "category": "vital-signs", "code": {"text": "Body temperature"}, "value": "37.0 Cel", "effectiveDateTime": "2026-10-03T06:00:00", "meta": {"tag": [{"code": "workshop-overlay"}]}},
+    {"resourceType": "Observation", "id": "ov-jd-obs-creat", "category": "laboratory", "code": {"text": "Creatinine"}, "value": "0.9 mg/dL", "effectiveDateTime": "2026-10-02T05:30:00", "interpretation": "normal", "meta": {"tag": [{"code": "workshop-overlay"}]}},
+    {"resourceType": "Observation", "id": "ov-jd-obs-wbc", "category": "laboratory", "code": {"text": "White blood cells"}, "value": "9.1 10*3/uL", "effectiveDateTime": "2026-10-02T05:30:00", "interpretation": "normal (12.8 on admission)", "meta": {"tag": [{"code": "workshop-overlay"}]}},
+    {"resourceType": "Observation", "id": "ov-jd-obs-glucose", "category": "laboratory", "code": {"text": "Glucose"}, "value": "142 mg/dL", "effectiveDateTime": "2026-10-03T06:00:00", "meta": {"tag": [{"code": "workshop-overlay"}]}}
+  ],
+  "notes": [
+    {
+      "resourceType": "DocumentReference", "id": "ov-jd-note-hp", "date": "2026-09-30",
+      "type": {"text": "Admission history & physical"}, "author": "Dr. Morgana Pendragon",
+      "text": "60F with stage I NSCLC (resected 2019, in remission), T2DM, HTN, chronic cancer-related pain on oxycodone PRN. 3 days of cough, fever 38.9 C, RLL consolidation on chest X-ray. SpO2 91% on room air. Admit for IV ceftriaxone. Penicillin allergy (hives). Hold metformin after IV contrast CT.",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "DocumentReference", "id": "ov-jd-note-day3", "date": "2026-10-03",
+      "type": {"text": "Progress note, hospital day 3"}, "author": "Dr. Morgana Pendragon",
+      "text": "Afebrile 48 h, WBC normalised, eating well. Walking SpO2 86% on room air, 93% on 2 L: needs home oxygen with exertion. Plan: discharge today; switch to oral antibiotic to complete 5 days; resume home meds; renew oxycodone (2 tablets left); PCP follow-up within 7 days; repeat chest X-ray in 6 weeks.",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "DocumentReference", "id": "ov-jd-note-onc", "date": "2026-09-05",
+      "type": {"text": "Oncology follow-up"}, "author": "Dr. Morgana Pendragon",
+      "text": "Stage I NSCLC, s/p resection and cisplatin/paclitaxel (2019). No evidence of recurrence on last CT. Persistent chest-wall pain 4/10, controlled on oxycodone 5 mg q6h PRN (about 20 tablets/month).",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    },
+    {
+      "resourceType": "DocumentReference", "id": "ov-jd-note-psych", "date": "2026-08-20",
+      "type": {"text": "Psychiatry progress note"}, "author": "Dr. Sam Okafor, MD (Psychiatry)",
+      "text": "Depressive symptoms after cancer diagnosis, improving on sertraline 50 mg. PHQ-9 down from 16 to 9. Weekly therapy. No safety concerns. Discussed opioid use; no misuse behaviours observed.",
+      "meta": {"tag": [{"code": "workshop-overlay"}],
+               "security": [{"system": "http://terminology.hl7.org/CodeSystem/v3-ActCode", "code": "PSY", "display": "psychiatry disorder information sensitivity"}]}
+    }
+  ],
+  "messages": [
+    {
+      "resourceType": "Communication", "id": "msg-jd-1", "sent": "2026-10-02T20:14:00", "sender": "Jane Doe (patient portal)",
+      "text": "Hi Dr. Pendragon, will I need the oxygen at home all the time? And can my prescriptions go to Main Street Pharmacy on Elm St? Thanks, Jane",
+      "meta": {"tag": [{"code": "workshop-overlay"}]}
+    }
+  ],
+  "coverage": {
+    "resourceType": "Coverage", "id": "cov-jane-doe", "status": "active",
+    "payor": "Blue Cross Blue Shield", "plan": "PPO Gold", "memberId": "BCB-447-2190",
+    "beneficiary": "Patient/jane-doe",
+    "meta": {"tag": [{"code": "workshop-overlay"}]}
+  },
+  "preferences": {
+    "pharmacy": {"partner": "retail-pharmacy", "name": "Main Street Pharmacy", "address": "212 Elm St, Durham, NC"},
+    "primaryCare": {"partner": "pcp-clinic", "name": "Maple Family Medicine", "clinician": "Dr. Alex Lee"},
+    "consent": {"shareSensitiveWithPcp": false, "note": "No consent on file to share psychiatry records outside the hospital"},
+    "portalAccount": "jane.doe"
+  }
+}

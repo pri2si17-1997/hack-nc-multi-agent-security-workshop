@@ -1,0 +1,783 @@
+{
+  "patient": {
+    "resourceType": "Patient",
+    "id": "pt-4d2cc5fb",
+    "identifier": [
+      {
+        "type": "MRN",
+        "value": "51471b77-26e6-4100-9cc8-0139308245ba"
+      },
+      {
+        "type": "SSN",
+        "value": "999-68-1991"
+      }
+    ],
+    "name": [
+      {
+        "family": "Sawayn",
+        "given": [
+          "Luna"
+        ]
+      }
+    ],
+    "gender": "female",
+    "birthDate": "1952-12-20",
+    "address": [
+      {
+        "city": "Milford",
+        "state": "Massachusetts"
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "resourceType": "Condition",
+      "id": "caf142a0-ca35-4082-9eb1-1c25626b196d",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Acute viral pharyngitis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "195662009",
+            "display": "Acute viral pharyngitis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2018-10-31T17:48:49-04:00",
+      "abatementDateTime": "2018-11-11T16:48:49-05:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "0d83dc7c-a17c-446c-a7a8-6c1a2aa285bc",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Acute bronchitis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "10509002",
+            "display": "Acute bronchitis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2017-12-02T16:48:49-05:00",
+      "abatementDateTime": "2017-12-09T16:48:49-05:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "ed8c54b2-c0ce-4f4d-a081-ca7a488937f6",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Seizure disorder",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "128613002",
+            "display": "Seizure disorder"
+          }
+        ]
+      },
+      "onsetDateTime": "2016-12-04T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "7a837437-dd48-4923-a3b5-a2cc29954004",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "History of single seizure (situation)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "703151001",
+            "display": "History of single seizure (situation)"
+          }
+        ]
+      },
+      "onsetDateTime": "2016-12-04T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "0560b50a-df1c-4843-9242-b06aab17fca3",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Epilepsy",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "84757009",
+            "display": "Epilepsy"
+          }
+        ]
+      },
+      "onsetDateTime": "2016-12-04T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "d689caf4-0108-4eb8-a463-160bd0adb75e",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Osteoarthritis of knee",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "239873007",
+            "display": "Osteoarthritis of knee"
+          }
+        ]
+      },
+      "onsetDateTime": "2015-12-05T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "f842a757-d271-48dd-87dc-c7ae9fcf2fd6",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Viral sinusitis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2014-06-09T17:48:49-04:00",
+      "abatementDateTime": "2014-06-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "864a0025-26db-4bc3-bbe7-cef880293789",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Laceration of foot",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "284551006",
+            "display": "Laceration of foot"
+          }
+        ]
+      },
+      "onsetDateTime": "2014-01-20T16:48:49-05:00",
+      "abatementDateTime": "2014-02-10T16:48:49-05:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "d61264fa-856f-42db-989f-76cfe70b5359",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Neuropathy due to type 2 diabetes mellitus (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "368581000119106",
+            "display": "Neuropathy due to type 2 diabetes mellitus (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2008-01-19T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "87ac0faf-3bbc-4af5-81d8-6a88d90973d9",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Hyperglycemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "80394007",
+            "display": "Hyperglycemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1996-12-28T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "b04e2331-b401-4e3b-b855-653c12a7ea37",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Hypertriglyceridemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "302870006",
+            "display": "Hypertriglyceridemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1996-12-28T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "532cef11-e7a3-4e94-a7c0-dd6e452406e8",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Metabolic syndrome X (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "237602007",
+            "display": "Metabolic syndrome X (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1996-12-28T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "984f5bac-3bd6-48fe-a1a1-df304b7f9a86",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Prediabetes",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "15777000",
+            "display": "Prediabetes"
+          }
+        ]
+      },
+      "onsetDateTime": "1996-12-28T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "8c755394-bbac-4175-8e08-a8f81fbe8895",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Anemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "271737000",
+            "display": "Anemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1996-12-28T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "9d8834fb-487d-4273-921e-f48d055a839f",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Diabetes",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "44054006",
+            "display": "Diabetes"
+          }
+        ]
+      },
+      "onsetDateTime": "1994-12-31T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "bd3fcc2a-ba9d-4022-95d5-1ea507fd4d83",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Chronic sinusitis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "40055000",
+            "display": "Chronic sinusitis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1988-04-09T17:48:49-04:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "1adc12a3-abae-4fd5-b579-9ed15c2522c4",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Body mass index 30+ - obesity (finding)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "162864005",
+            "display": "Body mass index 30+ - obesity (finding)"
+          }
+        ]
+      },
+      "onsetDateTime": "1984-03-03T16:48:49-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "d475814c-1311-421f-bbac-2f53d321d0f0",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Miscarriage in first trimester",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "19169002",
+            "display": "Miscarriage in first trimester"
+          }
+        ]
+      },
+      "onsetDateTime": "1980-11-01T16:48:49-05:00",
+      "abatementDateTime": null
+    }
+  ],
+  "medications": [
+    {
+      "resourceType": "MedicationRequest",
+      "id": "98eeecf7-bb6a-4baf-9543-74ba20c48948",
+      "status": "stopped",
+      "medication": {
+        "text": "Diazepam [Valium]",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "563026",
+            "display": "Diazepam [Valium]"
+          }
+        ]
+      },
+      "authoredOn": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "3968acef-abab-44f1-89da-d26c7ed55d65",
+      "status": "stopped",
+      "medication": {
+        "text": "Carbamazepine[Tegretol]",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "308971",
+            "display": "Carbamazepine[Tegretol]"
+          }
+        ]
+      },
+      "authoredOn": "2017-12-09T16:48:49-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "863080a6-8288-4acf-a7ac-e292bfdf752a",
+      "status": "stopped",
+      "medication": {
+        "text": "Acetaminophen 21.7 MG/ML / Dextromethorphan Hydrobromide 1 MG/ML / doxylamine succinate 0.417 MG/ML Oral Solution",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1043400",
+            "display": "Acetaminophen 21.7 MG/ML / Dextromethorphan Hydrobromide 1 MG/ML / doxylamine succinate 0.417 MG/ML Oral Solution"
+          }
+        ]
+      },
+      "authoredOn": "2017-12-02T16:48:49-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "d0c28393-7ad9-4f43-a42a-17024d66438f",
+      "status": "stopped",
+      "medication": {
+        "text": "Clonazepam [Klonopin]",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1153378",
+            "display": "Clonazepam [Klonopin]"
+          }
+        ]
+      },
+      "authoredOn": "2016-12-04T16:48:49-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "602c53ac-9704-4d4d-ab6a-aa26f5355859",
+      "status": "active",
+      "medication": {
+        "text": "Naproxen sodium 220 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "849574",
+            "display": "Naproxen sodium 220 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2015-12-05T16:48:49-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "80975cf3-8bad-461b-ae0e-5274e83d7f10",
+      "status": "stopped",
+      "medication": {
+        "text": "Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "562251",
+            "display": "Amoxicillin 250 MG / Clavulanate 125 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2014-06-09T17:48:49-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "dacb19a4-1fe2-4825-9da6-90e7b747932c",
+      "status": "stopped",
+      "medication": {
+        "text": "Acetaminophen 325 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "313782",
+            "display": "Acetaminophen 325 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2014-01-20T16:48:49-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "5f2fbfe4-6169-41b0-ba07-99d2746774a3",
+      "status": "active",
+      "medication": {
+        "text": "ferrous sulfate 325 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "310325",
+            "display": "ferrous sulfate 325 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "1996-12-29T17:48:49-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "bceef82c-df98-49cf-91c0-f02cad50ef45",
+      "status": "active",
+      "medication": {
+        "text": "24 HR Metformin hydrochloride 500 MG Extended Release Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "860975",
+            "display": "24 HR Metformin hydrochloride 500 MG Extended Release Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "1994-12-31T16:48:49-05:00"
+    }
+  ],
+  "observations": [
+    {
+      "resourceType": "Observation",
+      "id": "5843dd08-2629-438d-b6fe-2ebdb5872ebb",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Height",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8302-2",
+            "display": "Body Height"
+          }
+        ]
+      },
+      "value": "156.9 cm",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "0dd9d094-c530-42b2-ba31-d0da0bc4d4eb",
+      "category": "vital-signs",
+      "code": {
+        "text": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "72514-3",
+            "display": "Pain severity - 0-10 verbal numeric rating [Score] - Reported"
+          }
+        ]
+      },
+      "value": "0.3 {score}",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "8319a6a2-3318-48e6-940d-6e046628c631",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Weight",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "29463-7",
+            "display": "Body Weight"
+          }
+        ]
+      },
+      "value": "67.9 kg",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "3b55ce0e-febe-4f25-a912-dfee3b1efd16",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Mass Index",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "39156-5",
+            "display": "Body Mass Index"
+          }
+        ]
+      },
+      "value": "27.6 kg/m2",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "b2d9398a-dcec-4dc7-abcb-2594fe602e6e",
+      "category": "vital-signs",
+      "code": {
+        "text": "Blood Pressure",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "55284-4",
+            "display": "Blood Pressure"
+          }
+        ]
+      },
+      "value": "124/81 mm[Hg]",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "d8e717e4-10f9-4b70-85d8-b1c01a3289c1",
+      "category": "vital-signs",
+      "code": {
+        "text": "Oral temperature",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8331-1",
+            "display": "Oral temperature"
+          }
+        ]
+      },
+      "value": "37.8 Cel",
+      "effectiveDateTime": "2018-10-31T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "5753bea6-991c-4d54-bb40-96c3f088f7fe",
+      "category": "laboratory",
+      "code": {
+        "text": "Glucose",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2339-0",
+            "display": "Glucose"
+          }
+        ]
+      },
+      "value": "87.9 mg/dL",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "87fe2660-37cf-4080-bb63-bf930780564a",
+      "category": "laboratory",
+      "code": {
+        "text": "Urea Nitrogen",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "6299-2",
+            "display": "Urea Nitrogen"
+          }
+        ]
+      },
+      "value": "9.9 mg/dL",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "3773ad02-e11c-4638-9082-bea2a922451d",
+      "category": "laboratory",
+      "code": {
+        "text": "Creatinine",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "38483-4",
+            "display": "Creatinine"
+          }
+        ]
+      },
+      "value": "0.6 mg/dL",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "fb285802-6503-4be7-8a46-fc7a536dd878",
+      "category": "laboratory",
+      "code": {
+        "text": "Calcium",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "49765-1",
+            "display": "Calcium"
+          }
+        ]
+      },
+      "value": "8.9 mg/dL",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "6b2b60c0-88d0-4b61-9fee-a1c0032a4776",
+      "category": "laboratory",
+      "code": {
+        "text": "Sodium",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2947-0",
+            "display": "Sodium"
+          }
+        ]
+      },
+      "value": "142.2 mmol/L",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "ee9f02e2-b04c-4ed8-84f6-a4fb956c4373",
+      "category": "laboratory",
+      "code": {
+        "text": "Potassium",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "6298-4",
+            "display": "Potassium"
+          }
+        ]
+      },
+      "value": "4.1 mmol/L",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "744e5834-38e7-46a2-ad67-4cfe9af5c03c",
+      "category": "laboratory",
+      "code": {
+        "text": "Chloride",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2069-3",
+            "display": "Chloride"
+          }
+        ]
+      },
+      "value": "108.5 mmol/L",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "85438bc8-e7dc-4181-83cf-d847e14474a2",
+      "category": "laboratory",
+      "code": {
+        "text": "Carbon Dioxide",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "20565-8",
+            "display": "Carbon Dioxide"
+          }
+        ]
+      },
+      "value": "23.9 mmol/L",
+      "effectiveDateTime": "2019-03-23T17:48:49-04:00"
+    }
+  ],
+  "claims": [
+    {
+      "resourceType": "Claim",
+      "id": "e53ef4a9-c83a-4ebc-a475-6d6b8d6904f7",
+      "status": "active",
+      "type": "pharmacy",
+      "created": "2019-03-23T18:03:49-04:00",
+      "insurer": "Medicare",
+      "total": 22.2
+    },
+    {
+      "resourceType": "Claim",
+      "id": "adf463ac-399a-4f77-b459-52bda065fa14",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-03-23T18:03:49-04:00",
+      "insurer": "Medicare",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "04c49e2d-2459-4ff8-bcd4-746a74ab9534",
+      "status": "active",
+      "type": "institutional",
+      "created": "2018-11-17T17:03:49-05:00",
+      "insurer": "Medicare",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "a6f2c467-81ae-4566-8258-b2f8337ac498",
+      "status": "active",
+      "type": "institutional",
+      "created": "2018-11-10T17:03:49-05:00",
+      "insurer": "Medicare",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "c7a3bf3b-6719-4cd5-b0ff-8aa41532ce67",
+      "status": "active",
+      "type": "institutional",
+      "created": "2018-10-31T18:03:49-04:00",
+      "insurer": "Medicare",
+      "total": 129.16
+    }
+  ],
+  "coverage": {
+    "resourceType": "Coverage",
+    "id": "cov-pt-4d2cc5fb",
+    "status": "active",
+    "payor": "Medicare",
+    "beneficiary": "Patient/pt-4d2cc5fb"
+  },
+  "notes": [],
+  "source": "Synthea (synthetic data, MITRE, Apache-2.0)",
+  "synthea_file": "Luna60_Sawayn19_51471b77-26e6-4100-9cc8-0139308245ba.json"
+}

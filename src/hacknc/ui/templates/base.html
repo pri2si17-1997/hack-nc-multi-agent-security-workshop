@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}HackNC General Hospital{% endblock %}</title>
+  <link rel="stylesheet" href="{{ static('app.css') }}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' rx='6' fill='%230f766e'/%3E%3Cpath d='M10 5h4v5h5v4h-5v5h-4v-5H5v-4h5z' fill='white'/%3E%3C/svg%3E">
+</head>
+<body class="{% block body_class %}{% endblock %}{% if user and user.role == 'admin' %} role-admin{% endif %}">
+  <header class="topbar">
+    <a class="brand" href="/">
+      <svg class="brand-mark" viewBox="0 0 24 24" aria-hidden="true"><rect width="24" height="24" rx="6"/><path d="M10 5h4v5h5v4h-5v5h-4v-5H5v-4h5z"/></svg>
+      <span>HackNC General Hospital</span>
+      {% if user and user.role == 'admin' %}<span class="console-tag">Admin console</span>{% endif %}
+    </a>
+    {% if user %}
+    <nav class="top-nav" aria-label="Main">
+      {% for item in nav %}
+      <a href="{{ item.path }}" class="{% if active == item.path or (item.path != '/admin' and active.startswith(item.path)) %}active{% endif %}">{{ item.label }}</a>
+      {% endfor %}
+    </nav>
+    <div class="user-chip">
+      <span class="avatar" aria-hidden="true">{{ user.name[:1] }}</span>
+      <span class="user-meta">
+        <span class="user-name">{{ user.name }}</span>
+        <span class="role role-{{ user.role }}">{{ user.role }}</span>
+      </span>
+      <a class="btn btn-ghost btn-sm" href="/logout">Log out</a>
+    </div>
+    {% endif %}
+  </header>
+  <main class="content {% block main_class %}{% endblock %}">
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{{ static('app.js') }}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,881 @@
+{
+  "patient": {
+    "resourceType": "Patient",
+    "id": "pt-8e674838",
+    "identifier": [
+      {
+        "type": "MRN",
+        "value": "e52dd621-0835-4773-a309-6bdc64e77753"
+      },
+      {
+        "type": "SSN",
+        "value": "999-53-8506"
+      }
+    ],
+    "name": [
+      {
+        "family": "Doyle",
+        "given": [
+          "Mel"
+        ]
+      }
+    ],
+    "gender": "male",
+    "birthDate": "1955-11-27",
+    "address": [
+      {
+        "city": "Attleboro",
+        "state": "Massachusetts"
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "resourceType": "Condition",
+      "id": "23c04224-0a9d-452b-84e5-2b4377795624",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Neoplasm of prostate",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "126906006",
+            "display": "Neoplasm of prostate"
+          }
+        ]
+      },
+      "onsetDateTime": "2019-02-10T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "10ab4645-5091-496a-aace-a7fda2a067c8",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Carcinoma in situ of prostate (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "92691004",
+            "display": "Carcinoma in situ of prostate (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2019-02-10T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "64eb9008-a0a7-42f1-a231-bf5d84052c91",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Laceration of forearm",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "283371005",
+            "display": "Laceration of forearm"
+          }
+        ]
+      },
+      "onsetDateTime": "2018-01-10T21:01:23-05:00",
+      "abatementDateTime": "2018-01-31T21:01:23-05:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "7237390b-808e-499c-9931-822a2efe065a",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Acute viral pharyngitis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "195662009",
+            "display": "Acute viral pharyngitis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2016-08-04T22:01:23-04:00",
+      "abatementDateTime": "2016-08-13T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "d83e3ef0-6189-42ac-9026-208fd9322214",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Osteoporosis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "64859006",
+            "display": "Osteoporosis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2016-01-17T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "11044ec1-dc66-4a56-88d4-63ad2e22c76c",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Escherichia coli urinary tract infection",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "301011002",
+            "display": "Escherichia coli urinary tract infection"
+          }
+        ]
+      },
+      "onsetDateTime": "2014-02-11T21:01:23-05:00",
+      "abatementDateTime": "2014-03-21T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "b4cc6b13-3b72-4813-bd2c-57b1f04da5f5",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Recurrent urinary tract infection",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "197927001",
+            "display": "Recurrent urinary tract infection"
+          }
+        ]
+      },
+      "onsetDateTime": "2014-02-11T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "c4543d0d-1231-469b-a542-180b7f24a050",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Viral sinusitis (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "444814009",
+            "display": "Viral sinusitis (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2010-10-05T22:01:23-04:00",
+      "abatementDateTime": "2010-10-19T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "c880d7bf-58e2-4522-8c09-5dd68f5c0657",
+      "clinicalStatus": "resolved",
+      "code": {
+        "text": "Fracture of ankle",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "16114001",
+            "display": "Fracture of ankle"
+          }
+        ]
+      },
+      "onsetDateTime": "2010-03-23T22:01:23-04:00",
+      "abatementDateTime": "2010-05-22T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Condition",
+      "id": "30a28c4f-a51f-49a2-89a6-9bb22e644039",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Smokes tobacco daily",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "449868002",
+            "display": "Smokes tobacco daily"
+          }
+        ]
+      },
+      "onsetDateTime": "2005-01-09T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "22d064ed-f766-4a07-a858-c08e5d572f1d",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Familial Alzheimer's disease of early onset (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "230265002",
+            "display": "Familial Alzheimer's disease of early onset (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "2002-12-08T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "0589fb0e-7e25-4034-842e-7942e1b4d2e4",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Osteoarthritis of knee",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "239873007",
+            "display": "Osteoarthritis of knee"
+          }
+        ]
+      },
+      "onsetDateTime": "2000-11-15T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "ae4cd2b6-3dc5-45ec-ab63-f372a2ab08d4",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Hypertriglyceridemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "302870006",
+            "display": "Hypertriglyceridemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1984-02-05T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "950432b2-59a2-455a-b5a1-e54eb2daacc4",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Metabolic syndrome X (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "237602007",
+            "display": "Metabolic syndrome X (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1984-02-05T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "caaa3576-dcf4-4f72-b4da-5587ceaa6114",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Chronic kidney disease stage 1 (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "431855005",
+            "display": "Chronic kidney disease stage 1 (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1984-02-05T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "814a2b42-8cdf-43dc-af37-a11dc743a1e4",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Diabetic renal disease (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "127013003",
+            "display": "Diabetic renal disease (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1984-02-05T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "aee8a247-0c05-4ab2-a2a7-43e5abf45735",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Diabetes",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "44054006",
+            "display": "Diabetes"
+          }
+        ]
+      },
+      "onsetDateTime": "1981-02-01T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "2a4c79cd-7b84-4bdd-9ae4-88c8bf60d0ac",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Anemia (disorder)",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "271737000",
+            "display": "Anemia (disorder)"
+          }
+        ]
+      },
+      "onsetDateTime": "1981-02-01T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "5647e715-df1b-4124-b9dc-f2a7fa044730",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Hypertension",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "59621000",
+            "display": "Hypertension"
+          }
+        ]
+      },
+      "onsetDateTime": "1981-02-01T21:01:23-05:00",
+      "abatementDateTime": null
+    },
+    {
+      "resourceType": "Condition",
+      "id": "e847e5a8-32f2-4fc6-8fed-71c34ba9c921",
+      "clinicalStatus": "active",
+      "code": {
+        "text": "Prediabetes",
+        "coding": [
+          {
+            "system": "http://snomed.info/sct",
+            "code": "15777000",
+            "display": "Prediabetes"
+          }
+        ]
+      },
+      "onsetDateTime": "1978-01-29T21:01:23-05:00",
+      "abatementDateTime": null
+    }
+  ],
+  "medications": [
+    {
+      "resourceType": "MedicationRequest",
+      "id": "50979d69-76a4-4f20-8fef-8a140c61aa15",
+      "status": "active",
+      "medication": {
+        "text": "1 ML DOCEtaxel 20 MG/ML Injection",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1860480",
+            "display": "1 ML DOCEtaxel 20 MG/ML Injection"
+          }
+        ]
+      },
+      "authoredOn": "2019-02-10T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "7997657c-c157-4bb8-ae53-bb541c300120",
+      "status": "active",
+      "medication": {
+        "text": "0.25 ML Leuprolide Acetate 30 MG/ML Prefilled Syringe",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "752899",
+            "display": "0.25 ML Leuprolide Acetate 30 MG/ML Prefilled Syringe"
+          }
+        ]
+      },
+      "authoredOn": "2019-02-10T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "8285b7aa-7471-4810-99da-d152e6a7cb08",
+      "status": "stopped",
+      "medication": {
+        "text": "Ibuprofen 200 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "310965",
+            "display": "Ibuprofen 200 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2018-01-10T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "96c6f4d8-128c-4caa-97e0-7cf806bd1498",
+      "status": "active",
+      "medication": {
+        "text": "Alendronic acid 10 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "904419",
+            "display": "Alendronic acid 10 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2016-01-17T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "4d98ddef-7030-4a32-94bf-658146a39afb",
+      "status": "stopped",
+      "medication": {
+        "text": "Nitrofurantoin 5 MG/ML Oral Suspension",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "311989",
+            "display": "Nitrofurantoin 5 MG/ML Oral Suspension"
+          }
+        ]
+      },
+      "authoredOn": "2014-03-14T22:01:23-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "a00847b7-1c9e-4d0b-b4a0-716c7d1b5977",
+      "status": "stopped",
+      "medication": {
+        "text": "Phenazopyridine hydrochloride 100 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "1094107",
+            "display": "Phenazopyridine hydrochloride 100 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2014-03-14T22:01:23-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "28f86efa-cdf6-4191-860c-f1b50ebe3e6d",
+      "status": "stopped",
+      "medication": {
+        "text": "NITROFURANTOIN, MACROCRYSTALS 50 MG Oral Capsule",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "311995",
+            "display": "NITROFURANTOIN, MACROCRYSTALS 50 MG Oral Capsule"
+          }
+        ]
+      },
+      "authoredOn": "2014-01-14T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "bf72b0e3-cf8d-4ccb-8295-30360e19b257",
+      "status": "stopped",
+      "medication": {
+        "text": "Acetaminophen 325 MG / HYDROcodone Bitartrate 7.5 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "857005",
+            "display": "Acetaminophen 325 MG / HYDROcodone Bitartrate 7.5 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2010-03-23T22:01:23-04:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "974d231e-1bf9-4ae2-a17b-eeebdc20e150",
+      "status": "active",
+      "medication": {
+        "text": "24hr nicotine transdermal patch",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "198031",
+            "display": "24hr nicotine transdermal patch"
+          }
+        ]
+      },
+      "authoredOn": "2004-12-12T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "aebaed99-5a51-42c1-8d33-bde7ef92d9d7",
+      "status": "active",
+      "medication": {
+        "text": "Galantamine 4 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "310436",
+            "display": "Galantamine 4 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "2002-12-08T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "94a2b3ff-2985-4756-bead-c1e89f2d4055",
+      "status": "active",
+      "medication": {
+        "text": "insulin human, isophane 70 UNT/ML / Regular Insulin, Human 30 UNT/ML Injectable Suspension [Humulin]",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "106892",
+            "display": "insulin human, isophane 70 UNT/ML / Regular Insulin, Human 30 UNT/ML Injectable Suspension [Humulin]"
+          }
+        ]
+      },
+      "authoredOn": "1985-01-20T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "330896e9-d695-4546-8f94-ba31ff51e413",
+      "status": "active",
+      "medication": {
+        "text": "ferrous sulfate 325 MG Oral Tablet",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "310325",
+            "display": "ferrous sulfate 325 MG Oral Tablet"
+          }
+        ]
+      },
+      "authoredOn": "1981-02-01T21:01:23-05:00"
+    },
+    {
+      "resourceType": "MedicationRequest",
+      "id": "4fd6736e-1fb9-4bdd-9369-0b66fbc1dba8",
+      "status": "active",
+      "medication": {
+        "text": "Hydrochlorothiazide 12.5 MG",
+        "coding": [
+          {
+            "system": "http://www.nlm.nih.gov/research/umls/rxnorm",
+            "code": "429503",
+            "display": "Hydrochlorothiazide 12.5 MG"
+          }
+        ]
+      },
+      "authoredOn": "1981-02-01T21:01:23-05:00"
+    }
+  ],
+  "observations": [
+    {
+      "resourceType": "Observation",
+      "id": "ad0c3e01-79a9-4434-bc9a-34cc140f0960",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Height",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8302-2",
+            "display": "Body Height"
+          }
+        ]
+      },
+      "value": "173.0 cm",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "dd4fd181-f59c-4499-91c0-68318755210b",
+      "category": "vital-signs",
+      "code": {
+        "text": "Pain severity - 0-10 verbal numeric rating [Score] - Reported",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "72514-3",
+            "display": "Pain severity - 0-10 verbal numeric rating [Score] - Reported"
+          }
+        ]
+      },
+      "value": "3.5 {score}",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "e1ae9714-b0d9-4d9c-8f1a-7b65b2da5df9",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Weight",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "29463-7",
+            "display": "Body Weight"
+          }
+        ]
+      },
+      "value": "90.5 kg",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "a3409644-cad3-4e51-a918-8f7046057466",
+      "category": "vital-signs",
+      "code": {
+        "text": "Body Mass Index",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "39156-5",
+            "display": "Body Mass Index"
+          }
+        ]
+      },
+      "value": "30.2 kg/m2",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "fbcbdc2c-1673-493b-91d0-8675b0a45d62",
+      "category": "vital-signs",
+      "code": {
+        "text": "Blood Pressure",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "55284-4",
+            "display": "Blood Pressure"
+          }
+        ]
+      },
+      "value": "137/88 mm[Hg]",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "9430e67a-435f-4076-85f5-eb29e4702615",
+      "category": "vital-signs",
+      "code": {
+        "text": "Oral temperature",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "8331-1",
+            "display": "Oral temperature"
+          }
+        ]
+      },
+      "value": "37.2 Cel",
+      "effectiveDateTime": "2016-08-04T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "a33eb140-6520-4df9-b840-a52915b733ac",
+      "category": "laboratory",
+      "code": {
+        "text": "Glucose",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2339-0",
+            "display": "Glucose"
+          }
+        ]
+      },
+      "value": "113.7 mg/dL",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "981d061d-16a2-4845-8891-8ed109152e73",
+      "category": "laboratory",
+      "code": {
+        "text": "Urea Nitrogen",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "6299-2",
+            "display": "Urea Nitrogen"
+          }
+        ]
+      },
+      "value": "9.0 mg/dL",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "fb3aca77-ff5b-4b17-982c-3260a969740a",
+      "category": "laboratory",
+      "code": {
+        "text": "Creatinine",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "38483-4",
+            "display": "Creatinine"
+          }
+        ]
+      },
+      "value": "4.1 mg/dL",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "6ff8b0f3-f2e1-4473-b48b-212e90e1e3b6",
+      "category": "laboratory",
+      "code": {
+        "text": "Calcium",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "49765-1",
+            "display": "Calcium"
+          }
+        ]
+      },
+      "value": "8.8 mg/dL",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "0ea7916e-264d-4413-baed-3f93218da64c",
+      "category": "laboratory",
+      "code": {
+        "text": "Sodium",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2947-0",
+            "display": "Sodium"
+          }
+        ]
+      },
+      "value": "141.1 mmol/L",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "1385a6be-2562-43e5-8f9e-5797d14a6ee6",
+      "category": "laboratory",
+      "code": {
+        "text": "Potassium",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "6298-4",
+            "display": "Potassium"
+          }
+        ]
+      },
+      "value": "4.1 mmol/L",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "ee44791d-d12c-4d15-b52a-c2c8c89e18ff",
+      "category": "laboratory",
+      "code": {
+        "text": "Chloride",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "2069-3",
+            "display": "Chloride"
+          }
+        ]
+      },
+      "value": "110.1 mmol/L",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    },
+    {
+      "resourceType": "Observation",
+      "id": "78416ef4-31b0-43af-a85d-35f5fc3974b9",
+      "category": "laboratory",
+      "code": {
+        "text": "Carbon Dioxide",
+        "coding": [
+          {
+            "system": "http://loinc.org",
+            "code": "20565-8",
+            "display": "Carbon Dioxide"
+          }
+        ]
+      },
+      "value": "23.5 mmol/L",
+      "effectiveDateTime": "2019-09-01T22:01:23-04:00"
+    }
+  ],
+  "claims": [
+    {
+      "resourceType": "Claim",
+      "id": "7b706c8a-0269-40f4-baec-ac409a4b9592",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-09-15T23:01:23-04:00",
+      "insurer": "UnitedHealthcare",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "39b734ed-89de-4d0d-bf71-3fdfaa363621",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-09-01T22:16:23-04:00",
+      "insurer": "NO_INSURANCE",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "bab8bf74-b628-4a13-aa08-5a154f02f0da",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-08-25T22:16:23-04:00",
+      "insurer": "UnitedHealthcare",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "54d22528-b635-4dc4-8c6e-42fc9864b54a",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-08-18T22:16:23-04:00",
+      "insurer": "UnitedHealthcare",
+      "total": 129.16
+    },
+    {
+      "resourceType": "Claim",
+      "id": "5d41d937-fa13-455e-b307-7772fbf1d0a9",
+      "status": "active",
+      "type": "institutional",
+      "created": "2019-08-04T22:16:23-04:00",
+      "insurer": "UnitedHealthcare",
+      "total": 129.16
+    }
+  ],
+  "coverage": {
+    "resourceType": "Coverage",
+    "id": "cov-pt-8e674838",
+    "status": "active",
+    "payor": "UnitedHealthcare",
+    "beneficiary": "Patient/pt-8e674838"
+  },
+  "notes": [],
+  "source": "Synthea (synthetic data, MITRE, Apache-2.0)",
+  "synthea_file": "Mel236_Doyle959_e52dd621-0835-4773-a309-6bdc64e77753.json"
+}

@@ -1,0 +1,311 @@
+{
+ "_story": "Oma Runolfsson, 68. Admitted 2026-09-29 with non-st-elevation myocardial infarction (nstemi) (generated from: nstemi rule).",
+ "encounters": [
+  {
+   "resourceType": "Encounter",
+   "id": "gen-3a98-enc",
+   "status": "in-progress",
+   "class": "inpatient",
+   "reason": "Non-ST-elevation myocardial infarction (NSTEMI)",
+   "period": {
+    "start": "2026-09-29T17:05:00"
+   },
+   "location": "4 West, bed 6",
+   "attending": "Dr. Morgana Pendragon",
+   "dischargePlan": {
+    "readyDate": "2026-10-03",
+    "medications": [
+     {
+      "action": "new",
+      "drug": "aspirin",
+      "dose": "81 mg",
+      "quantity": 90,
+      "sig": "1 tablet by mouth daily",
+      "reason": "protect the new stent"
+     },
+     {
+      "action": "new",
+      "drug": "metoprolol succinate",
+      "dose": "25 mg",
+      "quantity": 30,
+      "sig": "1 tablet by mouth daily",
+      "reason": "after heart attack"
+     },
+     {
+      "action": "new",
+      "drug": "atorvastatin",
+      "dose": "80 mg",
+      "quantity": 30,
+      "sig": "1 tablet by mouth at night",
+      "reason": "high-intensity statin after heart attack"
+     },
+     {
+      "action": "stop",
+      "drug": "simvastatin",
+      "reason": "replaced by atorvastatin"
+     }
+    ],
+    "equipment": [],
+    "followUp": {
+     "specialty": "cardiology",
+     "within_days": 7,
+     "reason": "Follow-up after NSTEMI and coronary stent",
+     "note": "cardiac rehabilitation referral sent"
+    },
+    "warningSigns": "chest pain or pressure that lasts more than 5 minutes (call 911), fainting, or black stools"
+   },
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "conditions": [
+  {
+   "resourceType": "Condition",
+   "id": "gen-3a98-cond-1",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Non-ST elevation myocardial infarction",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "I21.4",
+      "display": "Non-ST elevation myocardial infarction"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-29",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "Condition",
+   "id": "gen-3a98-cond-2",
+   "clinicalStatus": "active",
+   "code": {
+    "text": "Coronary artery disease, stent to the circumflex artery",
+    "coding": [
+     {
+      "system": "http://hl7.org/fhir/sid/icd-10-cm",
+      "code": "I25.10",
+      "display": "Coronary artery disease, stent to the circumflex artery"
+     }
+    ]
+   },
+   "onsetDateTime": "2026-09-29",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medications": [
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-3a98-med-ip1",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Heparin infusion per protocol"
+   },
+   "authoredOn": "2026-09-29",
+   "dischargeAction": "stop (hospital only)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  },
+  {
+   "resourceType": "MedicationRequest",
+   "id": "gen-3a98-med-ip2",
+   "status": "active",
+   "category": "inpatient",
+   "medication": {
+    "text": "Nitroglycerin infusion 10 mcg/min"
+   },
+   "authoredOn": "2026-09-29",
+   "dischargeAction": "stop (hospital only)",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "medicationHolds": [],
+ "observations": [
+  {
+   "resourceType": "Observation",
+   "id": "gen-3a98-obs-trop",
+   "category": "laboratory",
+   "code": {
+    "text": "Troponin I, high sensitivity (peak)"
+   },
+   "value": "1506 ng/L",
+   "effectiveDateTime": "2026-10-03T05:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "high (heart muscle injury)"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-3a98-obs-ldl",
+   "category": "laboratory",
+   "code": {
+    "text": "LDL cholesterol"
+   },
+   "value": "142 mg/dL",
+   "effectiveDateTime": "2026-10-03T07:30:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "high"
+  },
+  {
+   "resourceType": "Observation",
+   "id": "gen-3a98-obs-creat",
+   "category": "laboratory",
+   "code": {
+    "text": "Creatinine"
+   },
+   "value": "0.8 mg/dL",
+   "effectiveDateTime": "2026-10-03T06:00:00",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   },
+   "interpretation": "normal"
+  }
+ ],
+ "notes": [
+  {
+   "resourceType": "DocumentReference",
+   "id": "gen-3a98-note-progress",
+   "date": "2026-10-03",
+   "type": {
+    "text": "Progress note, hospital day 4"
+   },
+   "author": "Dr. Morgana Pendragon",
+   "text": "Cardiac catheterisation day 1: drug-eluting stent to the circumflex artery. Chest-pain free since. Ejection fraction 50%. Plan: discharge on dual antiplatelet therapy, beta-blocker and high-intensity statin (replaces simvastatin); restart metformin if kidney function normal; cardiology within 7 days; cardiac rehab referral.",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "messages": [
+  {
+   "resourceType": "Communication",
+   "id": "gen-3a98-msg-1",
+   "sent": "2026-10-02T20:30:00",
+   "sender": "Oma Runolfsson (patient portal)",
+   "text": "When can I go back to work? I drive a delivery van. - Oma",
+   "meta": {
+    "tag": [
+     {
+      "code": "workshop-overlay"
+     },
+     {
+      "code": "generated-admission"
+     }
+    ]
+   }
+  }
+ ],
+ "allergies": [],
+ "coverage": {
+  "resourceType": "Coverage",
+  "id": "cov-pt-3a98e9ca",
+  "status": "active",
+  "payor": "Blue Cross Blue Shield",
+  "plan": "PPO Gold",
+  "memberId": "BLU-599-1808",
+  "beneficiary": "Patient/pt-3a98e9ca",
+  "meta": {
+   "tag": [
+    {
+     "code": "workshop-overlay"
+    },
+    {
+     "code": "generated-admission"
+    }
+   ]
+  }
+ },
+ "preferences": {
+  "pharmacy": {
+   "partner": "retail-pharmacy",
+   "name": "Main Street Pharmacy",
+   "address": "212 Elm St, Durham, NC"
+  },
+  "primaryCare": {
+   "partner": "pcp-clinic",
+   "name": "Maple Family Medicine",
+   "clinician": "Dr. Alex Lee"
+  },
+  "consent": {
+   "shareSensitiveWithPcp": false,
+   "note": "No sensitive records on file"
+  },
+  "portalAccount": "oma.runolfsson"
+ }
+}

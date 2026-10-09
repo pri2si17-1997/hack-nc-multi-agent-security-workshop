@@ -1,0 +1,32 @@
+# OPA runtime config.
+#
+# Decision logs: every decision OPA makes is shipped to the audit service, so the audit trail
+# has an independent record of *why* something was allowed or denied.
+#
+# DEMO SHORTCUT: OPA authenticates with a static shared token (from .env). We would rather
+# use its OAuth2 client-credentials support with Keycloak, but OPA refuses to send a client
+# secret to a token endpoint over plain HTTP (a good secure default). Production setups run
+# TLS everywhere and use `credentials.oauth2` instead.
+
+services:
+  audit:
+    url: http://audit-service:8006
+    credentials:
+      bearer:
+        token: "${OPA_LOG_TOKEN}"
+
+decision_logs:
+  service: audit
+  resource: /opa/logs
+  console: true              # also visible with `docker compose logs opa`
+  reporting:
+    min_delay_seconds: 1
+    max_delay_seconds: 3
+
+# OPA joins our traces: its evaluation spans appear inside the caller's trace in Tempo.
+distributed_tracing:
+  type: grpc
+  address: otel-collector:4317
+  service_name: opa
+  sample_percentage: 100
+  encryption: "off"

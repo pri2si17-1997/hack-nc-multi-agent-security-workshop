@@ -1,0 +1,39 @@
+# Grafana datasources, provisioned on startup so nothing needs clicking.
+# Tempo and Loki are cross-linked: trace -> its logs, and log line -> its trace.
+apiVersion: 1
+
+datasources:
+  - name: Tempo
+    type: tempo
+    uid: tempo
+    access: proxy
+    url: http://tempo:3200
+    isDefault: true
+    editable: false
+    jsonData:
+      # Trace view: draw who-called-whom for every trace, and show each span's agent next
+      # to its bar so a long waterfall is easier to scan.
+      nodeGraph:
+        enabled: true
+      spanBar:
+        type: Tag
+        tag: agent.id
+      tracesToLogsV2:
+        datasourceUid: loki
+        filterByTraceID: true
+        spanStartTimeShift: "-5m"
+        spanEndTimeShift: "5m"
+
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: http://loki:3100
+    editable: false
+    jsonData:
+      derivedFields:
+        - name: TraceID
+          datasourceUid: tempo
+          matcherType: label
+          matcherRegex: trace_id
+          url: "$${__value.raw}"

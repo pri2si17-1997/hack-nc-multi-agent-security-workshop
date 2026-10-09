@@ -1,0 +1,114 @@
+# OpenTelemetry Collector: the single entry point for all telemetry.
+# Services send OTLP here; the Collector redacts PHI, then forwards traces to Tempo (and to the
+# hospital UI, which turns them into the live activity map and feed) and logs to Loki.
+# Nothing leaves the Collector without passing through `transform/phi`.
+#
+# Tempo gets a trace shaped for people to read (the UI's copy stays complete):
+#   filter/plumbing  drops MCP connection handshakes (no story in them)
+#   transform/story  tags the spans that are steps of the story with story=true, so Grafana's
+#                    trace view can be filtered down to exactly what the activity map shows
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch: {}
+  # Small, fast batches so the UI's live panel keeps up with the agents.
+  batch/live:
+    timeout: 100ms
+
+  # PHI redaction, applied to every span and log record:
+  #   * patient names are replaced by a SHA-256 hash (still correlatable, no longer readable)
+  #   * anything shaped like a US SSN is masked
+  #   * known free-text fields that may carry PHI (LLM prompts/responses) are dropped
+  transform/phi:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          - set(span.attributes["patient.name"], SHA256(span.attributes["patient.name"])) where span.attributes["patient.name"] != nil
+          - replace_all_patterns(span.attributes, "value", "\\b\\d{3}-\\d{2}-\\d{4}\\b", "***-**-****")
+          # LLM prompts, answers and tool payloads (Strands also redacts them at the source)
+          - delete_key(span.attributes, "gen_ai.prompt")
+          - delete_key(span.attributes, "gen_ai.completion")
+          - delete_matching_keys(span.attributes, "^gen_ai\\.(input|output)\\.messages$")
+          - delete_key(span.attributes, "gen_ai.system_instructions")
+          - delete_matching_keys(span.attributes, "^gen_ai\\.tool\\.call\\.(arguments|result)$")
+      - context: spanevent
+        statements:
+          - delete_key(spanevent.attributes, "content") where IsMatch(spanevent.name, "^gen_ai\\.")
+          - delete_key(spanevent.attributes, "message") where IsMatch(spanevent.name, "^gen_ai\\.")
+          - delete_matching_keys(spanevent.attributes, "^gen_ai\\.(input|output)\\.messages$")
+    log_statements:
+      - set(log.attributes["patient.name"], SHA256(log.attributes["patient.name"])) where log.attributes["patient.name"] != nil
+      - replace_all_patterns(log.attributes, "value", "\\b\\d{3}-\\d{2}-\\d{4}\\b", "***-**-****")
+      - replace_pattern(log.body, "\\b\\d{3}-\\d{2}-\\d{4}\\b", "***-**-****")
+
+  # Spans that repeat or say nothing. All are leaves (no children), so dropping them leaves
+  # no orphans in the trace tree:
+  #   * MCP clients rediscover the server before every session (two spans per hop, all alike)
+  #   * OPA's own server span duplicates the caller's "→ opa POST /v1/data/<policy>" span
+  #   * every service checks the demo flags (break-the-glass, scenarios) before acting
+  filter/plumbing:
+    error_mode: ignore
+    traces:
+      span:
+        - span.name == "server/discover" or span.name == "MCP send server/discover"
+        - resource.attributes["service.name"] == "opa" and span.kind == SPAN_KIND_SERVER
+        - span.name == "GET /admin/flags" or span.name == "→ approval-service GET /admin/flags"
+
+  # story=true on the spans the UI turns into steps. Keep in sync with _RULES and
+  # STORY_AUDIT_ACTIONS in src/hacknc/ui/xray.py (a unit test checks the audit list).
+  transform/story:
+    error_mode: ignore
+    trace_statements:
+      - context: span
+        statements:
+          # someone asks; the coordinator plans or raises a security alert
+          - set(span.attributes["story"], true) where span.name == "ui.action" or span.name == "ui.ask" or span.name == "orchestrator plan" or span.name == "orchestrator security alert"
+          # 🔑 privilege: token exchanges at Keycloak
+          - set(span.attributes["story"], true) where IsMatch(span.name, "^token_exchange ") and span.attributes["token.requester"] != nil
+          # 🛡 trust: gateway tool lists and calls, disclosures, partners, signatures
+          - set(span.attributes["story"], true) where span.name == "tools/list" and span.attributes["mcp.tools_visible"] != nil
+          - set(span.attributes["story"], true) where IsMatch(span.name, "^ehr-mcp ") and span.attributes["mcp.tool"] != nil
+          - set(span.attributes["story"], true) where IsMatch(span.name, "^disclosure-mcp ") and span.attributes["disclosure.purpose"] != nil
+          - set(span.attributes["story"], true) where resource.attributes["service.name"] == "partners" and span.attributes["partner.name"] != nil
+          - set(span.attributes["story"], true) where resource.attributes["service.name"] == "approval-service" and IsMatch(span.name, "^policy ") and span.name != "policy view"
+          # 🧭 agents: their work and their model calls
+          - set(span.attributes["story"], true) where IsMatch(span.name, "^agent ") and span.attributes["agent.id"] != nil
+          - set(span.attributes["story"], true) where IsMatch(span.name, "^llm ") and span.attributes["llm.task"] != nil
+          # 📝 accountability: audit entries that are milestones (every tool call is audited too)
+          - set(span.attributes["story"], true) where span.attributes["audit.seq"] != nil and IsMatch(span.attributes["audit.action"], "^(approval\\.approve|approval\\.reject|approval\\.tamper_detected|break_glass\\.access|break_glass\\.granted|consent\\.changed|disclosure\\.blocked|disclosure\\.sent|discharge\\.refused|discharge\\.reopened|discharge\\.started|encounter\\.discharged|patient_request\\.decided|patient_request\\.submitted|security\\.alert_acknowledged|signature\\.requested)$")
+
+exporters:
+  otlp_grpc/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+  otlp_http/loki:
+    endpoint: http://loki:3100/otlp
+  otlp_http/ui:
+    endpoint: http://ui:8000/otlp
+    encoding: json
+    compression: none
+    retry_on_failure:
+      enabled: false        # a missed live step is fine; never back up the pipeline
+
+service:
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [transform/phi, filter/plumbing, transform/story, batch]
+      exporters: [otlp_grpc/tempo]
+    traces/ui:
+      receivers: [otlp]
+      processors: [transform/phi, batch/live]
+      exporters: [otlp_http/ui]
+    logs:
+      receivers: [otlp]
+      processors: [transform/phi, batch]
+      exporters: [otlp_http/loki]

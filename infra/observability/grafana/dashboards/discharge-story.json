@@ -1,0 +1,458 @@
+{
+  "uid": "hacknc-discharge-story",
+  "title": "Discharge story",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": true,
+  "tags": [
+    "hacknc",
+    "traces"
+  ],
+  "time": {
+    "from": "now-1h",
+    "to": "now"
+  },
+  "refresh": "",
+  "description": "Traces for people: pick a run, see the hops, filter to the story spans.",
+  "templating": {
+    "list": [
+      {
+        "name": "trace",
+        "label": "Trace ID",
+        "type": "textbox",
+        "query": "",
+        "current": {
+          "text": "",
+          "value": ""
+        },
+        "hide": 0
+      }
+    ]
+  },
+  "panels": [
+    {
+      "id": 1,
+      "type": "text",
+      "title": "How to read a trace",
+      "gridPos": {
+        "h": 9,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "options": {
+        "mode": "markdown",
+        "content": "**One question in the hospital app = one trace.** Pick a run on the left; it opens below.\n\n| In the trace | Pillar | What it shows |\n|---|---|---|\n| `ui.action` | 🧑 who asked | the clinician, their role and token scopes |\n| `orchestrator plan`, `agent …`, `llm …` | 🧭 agents | who was asked to do what, and when the model was used |\n| `token_exchange A -> B` | 🔑 privilege | Keycloak trading a token for a narrower one (or refusing) |\n| `ehr-mcp <tool>`, `→ opa POST /v1/data/…` | 🛡 trust | the gateway asking OPA before touching any record |\n| `→ audit-service POST /events` | 📝 accountability | an entry in the hash-chained audit trail |\n\n**Too many spans?** In the trace view open *Span filters* and add the tag `story` = `true`: only the spans\nthe live map in the app shows remain highlighted. Health checks, FastAPI internals, MCP handshakes and\nOPA's duplicate server spans are dropped by the Collector before they reach Tempo."
+      }
+    },
+    {
+      "id": 2,
+      "type": "table",
+      "title": "Runs: one per question or action (click to open)",
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 0,
+        "y": 9
+      },
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceql",
+          "tableType": "spans",
+          "limit": 30,
+          "query": "{ name = \"ui.action\" } | select(span.user.name, span.ui.action, span.question)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceIdHidden"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceService"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceName"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spanID"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "user.name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Who"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "ui.action"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Action"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "question"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Asked"
+              },
+              {
+                "id": "links",
+                "value": [
+                  {
+                    "title": "Show this run below",
+                    "url": "/d/hacknc-discharge-story/discharge-story?var-trace=${__data.fields.traceIdHidden}&${__url_time_range}"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Start time",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 3,
+      "type": "table",
+      "title": "Refused or blocked (click the span to see it in context)",
+      "gridPos": {
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 9
+      },
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceql",
+          "tableType": "spans",
+          "limit": 50,
+          "query": "{ span.story = true && (span.policy.decision = \"deny\" || span.token.granted = false || span.audit.decision = \"deny\") } | select(name, span.agent.id, span.token.requester, span.policy.reason, span.token.reason)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceIdHidden"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceService"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "traceName"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "duration"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "name"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "What"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "agent.id"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Agent"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "token.requester"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Token for"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "policy.reason"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Policy said"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "token.reason"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Keycloak said"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "spanID"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Span"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "story"
+            },
+            "properties": [
+              {
+                "id": "custom.hidden",
+                "value": true
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "policy.decision"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Policy"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "audit.decision"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Audit"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "token.granted"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Token granted"
+              }
+            ]
+          }
+        ]
+      },
+      "options": {
+        "showHeader": true,
+        "sortBy": [
+          {
+            "displayName": "Start time",
+            "desc": true
+          }
+        ]
+      }
+    },
+    {
+      "id": 4,
+      "type": "traces",
+      "title": "The run: every service, every hop",
+      "gridPos": {
+        "h": 18,
+        "w": 24,
+        "x": 0,
+        "y": 18
+      },
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceId",
+          "query": "$trace"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "nodeGraph",
+      "title": "Who called whom in this run",
+      "gridPos": {
+        "h": 14,
+        "w": 24,
+        "x": 0,
+        "y": 36
+      },
+      "datasource": {
+        "type": "tempo",
+        "uid": "tempo"
+      },
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {
+            "type": "tempo",
+            "uid": "tempo"
+          },
+          "queryType": "traceId",
+          "query": "$trace"
+        }
+      ]
+    }
+  ]
+}
