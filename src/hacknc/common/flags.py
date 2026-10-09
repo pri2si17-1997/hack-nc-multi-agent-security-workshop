@@ -80,11 +80,12 @@ class FlagReader:
         return self.all().get(key, DEFAULT_FLAGS.get(key, False))
 
 
-def remote_flags(approvals, admin_key: str) -> FlagReader:
-    """A ``FlagReader`` backed by the approval service's ``/admin/flags``."""
+def remote_flags(approvals) -> FlagReader:
+    """A ``FlagReader`` backed by the approval service's read-only ``/flags`` (no admin key:
+    the services that only read switches never hold the key that changes them)."""
 
     def fetch() -> dict[str, bool] | None:
-        result = approvals.get_flags(admin_key)
+        result = approvals.read_flags()
         return result.body if result.ok else None
 
     return FlagReader(fetch)

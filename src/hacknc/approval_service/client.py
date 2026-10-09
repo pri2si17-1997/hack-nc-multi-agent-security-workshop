@@ -34,6 +34,10 @@ class ApprovalApi:
     def grants(self, token: str) -> ApiResult:
         return call(self._http, "GET", f"{self.base_url}/break-glass/grants", token)
 
+    def read_flags(self) -> ApiResult:
+        """The demo switches, read-only (no admin key needed)."""
+        return call(self._http, "GET", f"{self.base_url}/flags")
+
     def get_flags(self, admin_key: str) -> ApiResult:
         return call(self._http, "GET", f"{self.base_url}/admin/flags",
                     headers={"X-Demo-Admin-Key": admin_key})

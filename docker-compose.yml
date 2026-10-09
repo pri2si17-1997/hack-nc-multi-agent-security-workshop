@@ -18,6 +18,28 @@ x-aws-profile: &aws-profile
   - ${HOME}/.aws:/home/app/.aws:ro
   - ${HOME}/.aws/login:/home/app/.aws/login
 
+# Shared, NON-secret settings from .env. No secret is listed here: each service below names
+# only the secrets it needs (its own Keycloak client secret, and the demo admin key only where
+# it is checked), so a compromised agent can't read another component's credentials.
+x-settings: &settings
+  KEYCLOAK_ISSUER: "${KEYCLOAK_ISSUER:-http://localhost:8080/realms/hacknc-hospital}"
+  UI_BASE_URL: "${UI_BASE_URL:-http://localhost:8000}"
+  APPROVAL_TTL_SECONDS: "${APPROVAL_TTL_SECONDS:-3600}"
+  BREAK_GLASS_TTL_SECONDS: "${BREAK_GLASS_TTL_SECONDS:-900}"
+  LLM_PROVIDER: "${LLM_PROVIDER:-bedrock}"
+  LLM_FALLBACK: "${LLM_FALLBACK:-ollama}"
+  LLM_TIMEOUT_SECONDS: "${LLM_TIMEOUT_SECONDS:-30}"
+  LLM_MAX_TOKENS: "${LLM_MAX_TOKENS:-4000}"
+  LLM_REASONING_EFFORT: "${LLM_REASONING_EFFORT:-low}"
+  AWS_PROFILE: "${AWS_PROFILE:-default}"
+  AWS_REGION: "${AWS_REGION:-}"
+  BEDROCK_MODEL_ID: "${BEDROCK_MODEL_ID:-openai.gpt-oss-20b-1:0}"
+  BEDROCK_ENDPOINT_URL: "${BEDROCK_ENDPOINT_URL:-}"
+  OLLAMA_BASE_URL: "${OLLAMA_BASE_URL:-http://host.docker.internal:11434}"
+  OLLAMA_MODEL: "${OLLAMA_MODEL:-qwen2.5:7b}"
+  OTEL_BSP_SCHEDULE_DELAY: "${OTEL_BSP_SCHEDULE_DELAY:-200}"
+  OTEL_SEMCONV_STABILITY_OPT_IN: "${OTEL_SEMCONV_STABILITY_OPT_IN:-gen_ai_unredacted_attributes=}"
+
 services:
   # ---------------------------------------------------------------- identity
   keycloak:
@@ -46,12 +68,14 @@ services:
   # ------------------------------------------------------------------ policy
   opa:
     image: openpolicyagent/opa:1.21.1
-    env_file: .env   # provides OPA_LOG_TOKEN to config.yaml
+    environment:
+      OPA_LOG_TOKEN: "${OPA_LOG_TOKEN:?is missing from .env, run make env}"
     command:
       - run
       - --server
       - --addr=0.0.0.0:8181
       - --config-file=/config/config.yaml
+      - --authorization=basic   # infra/opa/policies/system/authz.rego: read-only API
       - --watch            # hot-reload policies when files change
       - /policies
     volumes:
@@ -108,8 +132,9 @@ services:
   audit-service:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.audit_service"]
-    env_file: .env
     environment:
+      <<: *settings
+      OPA_LOG_TOKEN: "${OPA_LOG_TOKEN:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       AUDIT_DB_PATH: /data/audit.db
@@ -131,8 +156,10 @@ services:
   approval-service:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.approval_service"]
-    env_file: .env
     environment:
+      <<: *settings
+      APPROVAL_SERVICE_CLIENT_SECRET: "${APPROVAL_SERVICE_CLIENT_SECRET:?is missing from .env, run make env}"
+      DEMO_ADMIN_KEY: "${DEMO_ADMIN_KEY:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OPA_URL: http://opa:8181
@@ -159,8 +186,10 @@ services:
   orchestrator:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.orchestrator"]
-    env_file: .env
     environment:
+      <<: *settings
+      ORCHESTRATOR_CLIENT_SECRET: "${ORCHESTRATOR_CLIENT_SECRET:?is missing from .env, run make env}"
+      DEMO_ADMIN_KEY: "${DEMO_ADMIN_KEY:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       APPROVAL_URL: http://approval-service:8007
@@ -183,8 +212,9 @@ services:
   medrec-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "medrec-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      MEDREC_AGENT_CLIENT_SECRET: "${MEDREC_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -209,8 +239,9 @@ services:
   summary-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "summary-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      SUMMARY_AGENT_CLIENT_SECRET: "${SUMMARY_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -235,8 +266,9 @@ services:
   prescription-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "prescription-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      PRESCRIPTION_AGENT_CLIENT_SECRET: "${PRESCRIPTION_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -261,8 +293,9 @@ services:
   benefits-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "benefits-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      BENEFITS_AGENT_CLIENT_SECRET: "${BENEFITS_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -287,8 +320,9 @@ services:
   scheduling-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "scheduling-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      SCHEDULING_AGENT_CLIENT_SECRET: "${SCHEDULING_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -313,8 +347,9 @@ services:
   transitions-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "transitions-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      TRANSITIONS_AGENT_CLIENT_SECRET: "${TRANSITIONS_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -338,8 +373,9 @@ services:
   instructions-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "instructions-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      INSTRUCTIONS_AGENT_CLIENT_SECRET: "${INSTRUCTIONS_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -364,8 +400,9 @@ services:
   chart-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "chart-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      CHART_AGENT_CLIENT_SECRET: "${CHART_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -390,8 +427,9 @@ services:
   portal-agent:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.agents", "portal-agent"]
-    env_file: .env
     environment:
+      <<: *settings
+      PORTAL_AGENT_CLIENT_SECRET: "${PORTAL_AGENT_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       EHR_MCP_URL: http://ehr-mcp:8010/mcp
@@ -417,8 +455,9 @@ services:
   disclosure-mcp:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.disclosure_mcp"]
-    env_file: .env
     environment:
+      <<: *settings
+      DISCLOSURE_MCP_CLIENT_SECRET: "${DISCLOSURE_MCP_CLIENT_SECRET:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OPA_URL: http://opa:8181
@@ -448,8 +487,9 @@ services:
   partners:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.partners"]
-    env_file: .env
     environment:
+      <<: *settings
+      DEMO_ADMIN_KEY: "${DEMO_ADMIN_KEY:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
 
@@ -469,8 +509,10 @@ services:
   ehr-mcp:
     image: hacknc-app:dev
     command: ["python", "-m", "hacknc.ehr_mcp"]
-    env_file: .env
     environment:
+      <<: *settings
+      EHR_MCP_CLIENT_SECRET: "${EHR_MCP_CLIENT_SECRET:?is missing from .env, run make env}"
+      DEMO_ADMIN_KEY: "${DEMO_ADMIN_KEY:?is missing from .env, run make env}"
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
       OTEL_EXPORTER_OTLP_ENDPOINT: http://otel-collector:4318
       OPA_URL: http://opa:8181
@@ -501,8 +543,11 @@ services:
     build: .
     image: hacknc-app:dev   # the one image every Python service runs (see Makefile `build`)
     command: ["python", "-m", "hacknc.ui"]
-    env_file: .env
     environment:
+      <<: *settings
+      HOSPITAL_UI_CLIENT_SECRET: "${HOSPITAL_UI_CLIENT_SECRET:?is missing from .env, run make env}"
+      UI_SESSION_SECRET: "${UI_SESSION_SECRET:?is missing from .env, run make env}"
+      DEMO_ADMIN_KEY: "${DEMO_ADMIN_KEY:?is missing from .env, run make env}"
       # Inside Docker, reach Keycloak and the Collector by service name.
       # Token issuer stays http://localhost:8080/... (see keycloak service).
       KEYCLOAK_URL: http://keycloak:8080/realms/hacknc-hospital
