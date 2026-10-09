@@ -290,8 +290,11 @@ class EhrRepository:
                      and drug in m["medication"]["text"].lower()), None)
         plan = stay.setdefault("dischargePlan", {}).setdefault("medications", [])
         current = next((m for m in plan if m["drug"].lower() == drug), None)
+        dose = request.get("requested_dose") or (current or home or {}).get("dose")
+        if not dose:   # "raise my insulin": no number anywhere. The physician sets the dose.
+            return None
         item = {"action": "renew" if home else "new", "drug": drug,
-                "dose": request.get("requested_dose") or (current or home or {}).get("dose", ""),
+                "dose": dose,
                 "quantity": (current or home or {}).get("quantity", 30),
                 "sig": (current or home or {}).get("sig", "as directed"),
                 "reason": f"patient request {request['id']}, accepted by {by}"}

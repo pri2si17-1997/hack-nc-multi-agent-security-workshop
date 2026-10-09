@@ -36,7 +36,7 @@
         if (input) input.checked = !!on;
       });
       const parts = Object.entries(body.results).map(([k, ok]) => `${ok ? "✓" : "✕"} ${k}`).join(" · ");
-      show(body.ok, `Finale ready (AI model on, Wrong patient staged): ${parts}`);
+      show(body.ok, `Finale set up: demo reset, AI model on, Wrong patient staged. ${parts}`);
     } catch (err) {
       show(false, err.message);
     } finally {

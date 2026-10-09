@@ -10,6 +10,8 @@
     POST /api/signatures/{sid}               run: sign / reject a draft, then continue
     POST /api/discharges/{id}/alerts/{aid}/acknowledge
                                              run: review a security alert; the task is retried
+    POST /api/discharges/{id}/alerts/{aid}/manual
+                                             run: while IT fixes the agent, do its task by hand
     GET  /api/disclosures/{id}               what left the hospital (from the audit trail)
     GET  /api/access-log/{id}                every access to this patient (audit trail)
     POST /api/break-glass/{id}               emergency access to withheld records (if the admin
@@ -61,6 +63,10 @@ class ReopenBody(BaseModel):
 class ChatBody(BaseModel):
     patient_id: str
     message: str
+
+
+class ManualBody(BaseModel):
+    note: str = ""
 
 
 class BreakGlassBody(BaseModel):
@@ -203,6 +209,21 @@ def register(app: FastAPI, ctx: UiContext) -> None:
             return {"ok": True, "checklist": body}
 
         return start_run(ctx, session, "acknowledge", "Review security alert", patient_id, work)
+
+    @app.post("/api/discharges/{patient_id}/alerts/{alert_id}/manual")
+    async def handle_manually(request: Request, patient_id: str, alert_id: str,
+                              body: ManualBody) -> dict[str, Any]:
+        session = ctx.api_for_role(request, *CLINICAL)
+
+        async def work() -> dict[str, Any]:
+            status, result = await coordinator(
+                ctx, session, "POST", f"/discharges/{patient_id}/alerts/{alert_id}/manual",
+                {"note": body.note})
+            if status != 200:
+                return {"ok": False, "reason": result.get("detail", f"HTTP {status}")}
+            return {"ok": True, "checklist": result}
+
+        return start_run(ctx, session, "manual", "Take over by hand", patient_id, work)
 
     @app.post("/api/signatures/{signature_id}")
     async def sign(request: Request, signature_id: str, body: SignBody) -> dict[str, Any]:

@@ -17,6 +17,7 @@ from tests.integration.discharge_client import (
     acknowledge,
     ask,
     browser_for,
+    follow,
     reopen,
     sign,
     signatures,
@@ -182,18 +183,78 @@ def test_oversharing_is_stripped_by_the_disclosure_gateway(admin, doctor) -> Non
     assert not any("Prediabetes" in e or "carcinoma" in e for e in sent["payload"]["evidence"])
 
 
-def test_tampered_prescription_is_refused(admin, doctor) -> None:
+def test_tampered_prescription_is_refused_then_retried_after_the_fix(admin, doctor) -> None:
     drafts = signatures(start(doctor))
     before = last_seq(doctor)
     switch(admin, {"scenario.tampered_prescription": True})
     run = sign(doctor, drafts["Oxycodone 5 mg × 20"]["signature_id"])
     assert run.has("alters the signed prescription", "warn")
     assert run.has("Signature check failed: nothing sent", "deny")
-    assert run.task("send_prescriptions")["status"] == "failed"
     to_pharmacy = [d for d in disclosures(doctor, before)
                    if d["destination"] == "Main Street Pharmacy"]
     assert not any(d["decision"] == "allow" for d in to_pharmacy)          # nothing sent
     assert any("no valid physician signature" in d["reason"] for d in to_pharmacy)  # recorded
+    # Never an honest mistake: alert, sending suspended, discharge on hold.
+    assert run.checklist["status"] == "on_hold"
+    assert run.task("send_prescriptions")["status"] == "suspended"
+    [alert] = run.checklist["alerts"]
+    assert alert["stopped_by"] == "the signature check"
+    # Signed while suspended: held, not sent through the agent.
+    held = sign(doctor, drafts["Doxycycline 100 mg × 10"]["signature_id"])
+    assert signatures(held)["Doxycycline 100 mg × 10"]["status"] == "signed"
+
+    switch(admin, {"scenario.tampered_prescription": False})        # IT fixed the agent
+    reviewed = acknowledge(doctor, alert["id"])
+    assert reviewed.result["ok"], reviewed.result
+    new = [s for s in reviewed.task("prescriptions")["signatures"]
+           if s["status"] == "awaiting_signature"]
+    assert sorted(s["title"] for s in new) == ["Doxycycline 100 mg × 10", "Oxycodone 5 mg × 20"]
+    for draft in new + [drafts["Discharge summary"]]:
+        last = sign(doctor, draft["signature_id"])
+    assert last.checklist["status"] == "completed", last.checklist
+
+
+def test_still_tampering_so_the_physician_prescribes_by_hand(admin, doctor) -> None:
+    """IT hasn't fixed it yet: the physician does it outside the agents and the patient goes
+    home; the takeover is in the audit trail and the incident report."""
+    drafts = signatures(start(doctor))
+    switch(admin, {"scenario.tampered_prescription": True})
+    run = sign(doctor, drafts["Oxycodone 5 mg × 20"]["signature_id"])
+    [alert] = run.checklist["alerts"]
+    done = follow(doctor, doctor.post(
+        f"{UI}/api/discharges/{PATIENT}/alerts/{alert['id']}/manual",
+        json={"note": "sent from the e-prescribing system"}).json())
+    assert done.result["ok"], done.result
+    send = done.task("send_prescriptions")
+    assert send["status"] == "sent" and "Handled manually by dr.morgana" in send["summary"]
+    final = sign(doctor, drafts["Discharge summary"]["signature_id"])
+    assert final.checklist["status"] == "completed"
+    report = admin.get(f"{UI}/api/admin/incident/{PATIENT}").json()["report"]
+    [blocked] = report["stopped"]["blocked"]
+    assert "by hand" in blocked["review"]["reason"]
+
+
+def test_tampering_and_oversharing_work_for_any_patient(admin, doctor) -> None:
+    """Mel Doyle has no oxycodone and no equipment needing approval: both attacks still run,
+    are still stopped, and still show up in the audit trail as staged attacks."""
+    mel = "pt-8e674838"
+    switch(admin, {"scenario.oversharing": True})
+    run = start(doctor, mel, "Mel Doyle")
+    assert run.has("Benefits agent over-shares", "warn")
+    rows = doctor.get(f"{UI}/api/disclosures/{mel}").json()["disclosures"]
+    eligibility = [d for d in rows if d["purpose"] == "eligibility"][-1]
+    assert {"clinical_notes", "diagnosis_codes"} <= set(eligibility["withheld"])
+
+    switch(admin, {"scenario.oversharing": False, "scenario.tampered_prescription": True})
+    [first, *_] = [s for t in run.checklist["tasks"] if t["id"] == "prescriptions"
+                   for s in t["signatures"]]
+    signed = sign(doctor, first["signature_id"], patient=mel)
+    assert signed.has("alters the signed prescription", "warn")
+    assert signed.has("Signature check failed: nothing sent", "deny")
+
+    trail = admin.get(f"{UI}/api/admin/audit/events?limit=150").json()["entries"]
+    labels = {(e.get("attack") or {}).get("label") for e in trail if e.get("patient_id") == mel}
+    assert {"Over-disclosure", "Tampering after approval"} <= labels
 
 
 def test_rogue_agent_is_blocked_and_contained(admin, doctor, nurse) -> None:

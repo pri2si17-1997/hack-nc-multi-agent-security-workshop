@@ -30,7 +30,8 @@ DISCLOSURES = ("disclosure.sent", "disclosure.blocked")
 KEY_ACTIONS = {
     "portal.message", "patient_request.submitted", "patient_request.decided", "consent.changed",
     "discharge.started", "discharge.reopened", "discharge.refused", "agent.decision",
-    "agent.blocked", "security.alert", "security.alert_acknowledged", "signature.requested",
+    "agent.blocked", "security.alert", "security.alert_acknowledged",
+    "security.alert_handled_manually", "signature.requested",
     "approval.approve", "approval.reject", "encounter.discharged", "break_glass.access",
     "break_glass.granted", *DISCLOSURES,
 }
@@ -280,7 +281,9 @@ def _left(patient_id: str, entries: list[Entry], received: list[Entry],
 def _stopped(mine: list[Entry], alerts: list[Entry], by_seq: dict[int, Entry],
              witnesses: list[Entry], altered: int | None) -> dict[str, Any]:
     """Blocked attempts (with alert, review and witness) and every other refusal."""
-    acks = [e for e in mine if e["action"] == "security.alert_acknowledged"]
+    # A physician's response to an alert: reviewed and retried, or taken over by hand.
+    acks = [e for e in mine if e["action"] in ("security.alert_acknowledged",
+                                               "security.alert_handled_manually")]
     used_witnesses: set[int] = set()
     blocked, linked = [], set()
     for alert in alerts:

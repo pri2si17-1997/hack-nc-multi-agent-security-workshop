@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from dataclasses import dataclass
 from typing import Any
 from urllib.parse import quote
@@ -175,3 +176,55 @@ def grafana_trace_url(grafana_url: str, trace_id: str, span_id: str = "") -> str
         panes["t"]["panelsState"] = {"trace": {"spanId": span_id}}
     encoded = quote(json.dumps(panes, separators=(",", ":")), safe="")
     return f"{grafana_url.rstrip('/')}/explore?schemaVersion=1&panes={encoded}"
+
+
+# ------------------------------------------------------------------ patient portal
+
+_UNIT_WORDS = {"hr", "ml", "mg", "mcg", "unt", "units", "actuat", "oral", "tablet", "capsule"}
+_TWO_WORD = {"ferrous", "alendronic", "folic", "valproic"}   # "ferrous sulfate", not "ferrous"
+_STRENGTH = re.compile(r"(\d+(?:\.\d+)?)\s*(mg|mcg|units?)\b", re.IGNORECASE)
+
+
+def drug_word(text: str) -> str | None:
+    """The drug in a Synthea medicine name: '24 HR Metformin hydrochloride 500 MG' ->
+    'metformin', '1 ML DOCEtaxel 20 MG/ML' -> 'docetaxel'."""
+    tokens = re.split(r"[\s,/]+", text)
+    for i, token in enumerate(tokens):
+        if len(token) >= 4 and token.isalpha() and token.lower() not in _UNIT_WORDS:
+            if token.lower() in _TWO_WORD and i + 1 < len(tokens):
+                return f"{token} {tokens[i + 1]}".lower()
+            return token.lower()
+    return None
+
+
+def portal_suggestions(meds: list[dict[str, Any]]) -> dict[str, str]:
+    """The portal's quick messages, written about the patient's OWN medicines: a refill and a
+    dose increase for one they take (a controlled one first), a side effect for another."""
+    def named(m: dict[str, Any]) -> str | None:
+        return drug_word(m.get("medication", {}).get("text", ""))
+
+    def oral(m: dict[str, Any]) -> bool:   # "two tablets left" fits a tablet, not an injection
+        return bool(re.search(r"Oral (Tablet|Capsule)", m.get("medication", {}).get("text", "")))
+
+    def strength_of(m: dict[str, Any]) -> re.Match | None:
+        return _STRENGTH.search(m.get("dose") or "") or _STRENGTH.search(m["medication"]["text"])
+
+    # A controlled medicine first (the demo's story), then a tablet with a known strength, so
+    # "raise my X to N mg" names a real dose the physician can accept.
+    active = sorted((m for m in meds if m.get("status") != "on-hold" and named(m)),
+                    key=lambda m: (not m.get("controlledSchedule"), not strength_of(m),
+                                   not oral(m)))
+    main = active[0] if active else None
+    if main is None:
+        return {}
+    drug = named(main)
+    strength = strength_of(main)
+    raise_to = (f" to {float(strength.group(1)) * 2:g} {strength.group(2).lower()}"
+                if strength else "")
+    other = next((m for m in meds if m.get("status") == "on-hold" and named(m)), None) or \
+        next((m for m in active if m is not main), main)
+    return {
+        "refill": f"Can I get a refill of my {drug}? I only have two tablets left.",
+        "raise": f"It isn't working well enough. Please raise my {drug}{raise_to}.",
+        "side_effect": f"Since yesterday the {named(other)} makes me dizzy.",
+    }

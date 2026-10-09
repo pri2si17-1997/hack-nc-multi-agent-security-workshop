@@ -82,7 +82,7 @@ processors:
           - set(span.attributes["story"], true) where IsMatch(span.name, "^agent ") and span.attributes["agent.id"] != nil
           - set(span.attributes["story"], true) where IsMatch(span.name, "^llm ") and span.attributes["llm.task"] != nil
           # 📝 accountability: audit entries that are milestones (every tool call is audited too)
-          - set(span.attributes["story"], true) where span.attributes["audit.seq"] != nil and IsMatch(span.attributes["audit.action"], "^(approval\\.approve|approval\\.reject|approval\\.tamper_detected|break_glass\\.access|break_glass\\.granted|consent\\.changed|disclosure\\.blocked|disclosure\\.sent|discharge\\.refused|discharge\\.reopened|discharge\\.started|encounter\\.discharged|patient_request\\.decided|patient_request\\.submitted|security\\.alert_acknowledged|signature\\.requested)$")
+          - set(span.attributes["story"], true) where span.attributes["audit.seq"] != nil and IsMatch(span.attributes["audit.action"], "^(approval\\.approve|approval\\.reject|approval\\.tamper_detected|break_glass\\.access|break_glass\\.granted|consent\\.changed|disclosure\\.blocked|disclosure\\.sent|discharge\\.refused|discharge\\.reopened|discharge\\.started|encounter\\.discharged|patient_request\\.decided|patient_request\\.submitted|security\\.alert_acknowledged|security\\.alert_handled_manually|signature\\.requested)$")
 
 exporters:
   otlp_grpc/tempo:

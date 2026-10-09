@@ -150,6 +150,20 @@ def test_renewal_at_a_new_dose_is_named_by_the_new_dose() -> None:
     assert "accepted by dr.morgana" in oxy["note"]
 
 
+def test_renewal_at_a_new_dose_when_the_record_has_no_dose_field() -> None:
+    """Most Synthea medicines carry their strength only in the name (Norris's simvastatin)."""
+    meds = [{"id": "s1", "category": "home", "status": "active",
+             "medication": {"text": "Simvastatin 10 MG Oral Tablet"}}]
+    plan = {"medications": [{"action": "renew", "drug": "simvastatin", "dose": "20 mg",
+                             "quantity": 30, "sig": "daily", "reason": "patient request"}]}
+    [simva] = compose.reconcile(meds, [], OBS, plan)["discharge_medications"]
+    assert simva["name"] == "Simvastatin 20 mg (was 10 mg)"
+    assert simva["prescription"]["dose"] == "20 mg"
+    same = {"medications": [{**plan["medications"][0], "dose": "10 mg"}]}
+    [kept] = compose.reconcile(meds, [], OBS, same)["discharge_medications"]
+    assert kept["name"] == "Simvastatin 10 MG"
+
+
 def test_sulfa_allergy_swaps_to_the_known_alternative() -> None:
     plan = {"medications": [{"action": "new", "drug": "trimethoprim-sulfamethoxazole",
                              "dose": "800/160 mg", "quantity": 14, "sig": "bid"}]}

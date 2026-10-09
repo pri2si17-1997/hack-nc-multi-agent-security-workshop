@@ -546,7 +546,9 @@ def test_prepare_finale_resets_and_stages_wrong_patient(night, backend, oidc,
     assert night.approvals.flags["ai.model"] is True
     assert night.partners.resets == 1
     assert night.audit.events[-1].action == "demo.finale_prepared"
-    assert "Prepare the finale" in client.get("/admin").text
+    page = " ".join(client.get("/admin").text.split())
+    assert "Reset &amp; stage Wrong patient" in page                # says what it stages
+    assert "never legitimate" in page                                # and why
 
 
 # ------------------------------------------------------------------ patient portal

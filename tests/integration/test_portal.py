@@ -82,3 +82,28 @@ def test_consent_in_the_portal_changes_what_the_family_doctor_gets(jane, doctor)
         sign(doctor, draft["signature_id"])
     sent = {d["purpose"]: d for d in disclosures(doctor, before)}
     assert sent["care transition"]["withheld"] == []                  # she said yes
+
+
+def test_any_patient_uses_the_portal_with_their_own_medicines(doctor) -> None:
+    """Not just Jane: Norris DuBuque's quick messages name his own medicine, his request goes
+    through reconciliation, and the card shows the new dose."""
+    import html
+    import re
+
+    norris, pid = browser_for("norris.dubuque"), "pt-9fb75275"
+    try:
+        page = norris.get(f"{UI}/portal").text
+        chips = [html.unescape(c) for c in re.findall(r'data-say="([^"]+)"', page)]
+        assert chips and not any("oxycodone" in c for c in chips)
+        assert "Please raise my simvistatin to 20 mg." in chips[1]
+        request = norris.post(f"{UI}/api/portal/messages",
+                              json={"message": chips[1]}).json()["request"]
+    finally:
+        norris.close()
+    accepted = follow(doctor, doctor.post(f"{UI}/api/requests/{pid}/{request['id']}",
+                                          json={"accept": True}).json())
+    assert accepted.result["ok"], accepted.result
+    run = start(doctor, pid, "Norris DuBuque")
+    assert run.task("medrec")["status"] == "done", run.task("medrec")["detail"]
+    assert "Simvistatin 20 mg (was 10 mg)" in run.task("medrec")["detail"]
+    assert "Simvistatin 20 mg × 30" in signatures(run)

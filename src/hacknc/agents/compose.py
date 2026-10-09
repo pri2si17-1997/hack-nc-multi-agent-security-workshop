@@ -110,6 +110,12 @@ def _allergy_for(drug: str, allergies: list[dict[str, Any]]) -> dict[str, Any] |
     return None
 
 
+def _strength(text: str) -> str | None:
+    """'Simvastatin 10 MG Oral Tablet' -> '10 mg' (None if the name gives no strength)."""
+    found = re.search(r"(\d+(?:\.\d+)?)\s*(MG|MCG|UNT)\b", text, re.IGNORECASE)
+    return f"{found.group(1)} {found.group(2).lower()}" if found else None
+
+
 def _drug_name(rx: dict[str, Any]) -> str:
     return f"{rx['drug'][0].upper()}{rx['drug'][1:]} {rx['dose']}".strip()
 
@@ -244,8 +250,10 @@ def reconcile(meds: list[dict[str, Any]], allergies: list[dict[str, Any]],
         if action == "renew":
             # A new dose (e.g. a patient request the physician accepted) is named by what will
             # be prescribed, not by the home medicine's old strength.
-            changed = bool(item.get("dose")) and item["dose"] != med.get("dose")
-            shown = f"{_drug_name(item)} (was {med['dose']})" if changed else short
+            # Most records have no "dose" field: then the strength in the name ("10 MG").
+            home = med.get("dose") or _strength(name)
+            changed = bool(item.get("dose") and home) and item["dose"].lower() != home.lower()
+            shown = f"{_drug_name(item)} (was {home})" if changed else short
             prescribe(item, "renew", name=shown, note=item.get("reason") or
                       med.get("supplyNote", ""), record=med)
             if plan_list and plan_list[-1]["name"] == shown:

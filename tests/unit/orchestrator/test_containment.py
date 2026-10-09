@@ -195,3 +195,158 @@ def test_an_agent_that_does_not_answer_fails_its_task_not_the_request(monkeypatc
     result = anyio.run(orchestrator._call, deps, task, "tok", "reconcile_medications", {})
     assert result is None and task.status == "failed"
     assert "did not answer" in task.detail and "read timed out" in task.detail
+
+
+# ------------------------------------------------------------------ tampering after signing
+
+DOXY = {"drug": "doxycycline", "dose": "100 mg", "quantity": 10, "sig": "bid"}
+OXY = {"drug": "oxycodone", "dose": "5 mg", "quantity": 20, "sig": "q6h prn"}
+
+
+class TamperWatch(FakeWatch):
+    """Adds the signature service's tamper entries for the prescription agent's sends."""
+
+    def __init__(self):
+        super().__init__()
+        self.tamper = False
+
+    async def denials(self, agent, after_seq=0):
+        if agent == "prescription-agent" and self.tamper and self.pending:
+            self.pending, self.seq = False, self.seq + 1
+            return [{"seq": self.seq, "action": "approval.tamper_detected",
+                     "writer": "approval-service", "patient_id": "jane-doe",
+                     "agent_chain": [agent, "ehr-mcp"], "details": {},
+                     "reason": "content differs from what the physician signed"}]
+        return await super().denials(agent, after_seq)
+
+
+@pytest.fixture
+def tamper_env(monkeypatch, key_provider):
+    """Two prescriptions; while ``watch.tamper`` is on, every send is caught altering one."""
+    watch, calls = TamperWatch(), []
+    drafts = iter(range(2, 100))
+
+    def rx(content, sid):
+        return {"signature_id": sid, "title": content["drug"],
+                "content": {"patient_id": "jane-doe", **content}}
+
+    async def fake_call(deps, task, user_token, tool, arguments):
+        calls.append((tool, arguments))
+        if tool == "reconcile_medications":
+            return {"text": "ok", "discrepancies": [], "discharge_medications": [
+                {"name": "Doxycycline", "action": "new", "prescription": DOXY},
+                {"name": "Oxycodone", "action": "renew", "prescription": OXY}]}
+        if tool == "prepare_prescriptions":
+            plan = [m["prescription"] for m in arguments["medication_plan"]]
+            first = not any(t == "prepare_prescriptions" for t, _ in calls[:-1])
+            return {"text": "drafted", "prescriptions": [
+                rx(c, f"rx-{c['drug']}" if first else f"rx-{c['drug']}-{next(drafts)}")
+                for c in plan]}
+        if tool == "send_prescription":
+            watch.pending = watch.tamper
+            return ({"sent": False, "text": "🛑 Not sent: content differs"} if watch.tamper
+                    else {"sent": True, "text": "sent"})
+        return RESULTS[tool]
+
+    async def fake_record(deps, patient_id, user_token):
+        return {"discharge": {"disposition": "home"}}
+
+    monkeypatch.setattr(orchestrator, "_call", fake_call)
+    monkeypatch.setattr(orchestrator, "_ehr_record_discharge", fake_record)
+    watch.pending = False
+    deps = orchestrator.OrchestratorDeps(keycloak=None, secrets=lambda c: "s", agent_urls={},
+                                         audit=RecordingAudit(), flags=Flags(), admin_key="k",
+                                         watch=watch, assigner=FakeAssigner())
+    auth = BearerAuth(JwtValidator(ISSUER, "orchestrator", key_provider=key_provider))
+    return TestClient(orchestrator.create_app(deps, auth, DischargeBoard())), watch, deps, calls
+
+
+def sign(http, make_token, sid):
+    return http.post("/discharges/jane-doe/signed", headers=headers(make_token),
+                     json={"signature_id": sid}).json()
+
+
+def sigs(view, task="prescriptions"):
+    return {s["signature_id"]: s["status"] for t in view["tasks"] if t["id"] == task
+            for s in t["signatures"]}
+
+
+def test_tampered_send_raises_an_alert_and_holds_the_rest(tamper_env, make_token) -> None:
+    http, watch, _, calls = tamper_env
+    http.post("/discharges/jane-doe/start", headers=headers(make_token))
+    watch.tamper = True
+    view = sign(http, make_token, "rx-oxycodone")
+    [alert] = view["alerts"]
+    assert alert["stopped_by"] == "the signature check" and alert["agent"] == "prescription-agent"
+    assert view["status"] == "on_hold"
+    assert statuses(view)["send_prescriptions"] == "suspended"
+    # Signing the next one sends nothing through the suspended agent: it is held.
+    sends = sum(1 for t, _ in calls if t == "send_prescription")
+    view = sign(http, make_token, "rx-doxycycline")
+    assert sum(1 for t, _ in calls if t == "send_prescription") == sends
+    assert sigs(view) == {"rx-oxycodone": "refused", "rx-doxycycline": "signed"}
+    view = sign(http, make_token, "sum1")                  # other agents carry on
+    assert statuses(view)["send_summary"] == "sent" and view["status"] == "on_hold"
+
+
+def test_review_after_the_fix_redrafts_only_what_did_not_go(tamper_env, make_token) -> None:
+    http, watch, _, calls = tamper_env
+    http.post("/discharges/jane-doe/start", headers=headers(make_token))
+    sign(http, make_token, "rx-doxycycline")                   # sent before the attack
+    watch.tamper = True
+    view = sign(http, make_token, "rx-oxycodone")
+    sign(http, make_token, "sum1")
+    watch.tamper = False                                       # IT fixed the agent
+    view = http.post(f"/discharges/jane-doe/alerts/{view['alerts'][0]['id']}/acknowledge",
+                     headers=headers(make_token)).json()
+    redraft = [a for t, a in calls if t == "prepare_prescriptions"][-1]
+    assert [m["prescription"] for m in redraft["medication_plan"]] == [OXY]   # not doxycycline
+    statuses_now = sigs(view)
+    [new] = [sid for sid, st in statuses_now.items() if st == "awaiting_signature"]
+    assert statuses_now["rx-oxycodone"] == "replaced" and statuses_now["rx-doxycycline"] == "sent"
+    assert view["status"] == "awaiting_signatures"
+    view = sign(http, make_token, new)
+    assert view["status"] == "completed" and view["ehr_record"]["recorded"]
+
+
+def test_still_compromised_until_the_physician_takes_over(tamper_env, make_token) -> None:
+    """IT hasn't fixed it: the retry is caught again. The physician prescribes by hand and
+    the discharge finishes without the agent."""
+    http, watch, deps, _ = tamper_env
+    http.post("/discharges/jane-doe/start", headers=headers(make_token))
+    watch.tamper = True
+    view = sign(http, make_token, "rx-oxycodone")
+    view = http.post(f"/discharges/jane-doe/alerts/{view['alerts'][0]['id']}/acknowledge",
+                     headers=headers(make_token)).json()
+    [new] = [sid for sid, st in sigs(view).items() if st == "awaiting_signature"
+             and sid != "rx-doxycycline"]
+    view = sign(http, make_token, new)                         # caught again
+    assert view["status"] == "on_hold" and len(view["alerts"]) == 2
+    url = f"/discharges/jane-doe/alerts/{view['alerts'][1]['id']}/manual"
+    nurse = http.post(url, headers=headers(make_token, "agent:delegate patient:read"),
+                      json={"note": "phoned the pharmacy"})
+    assert nurse.status_code == 403                            # physicians only
+    view = http.post(url, headers=headers(make_token),
+                     json={"note": "sent from the e-prescribing system"}).json()
+    send = next(t for t in view["tasks"] if t["id"] == "send_prescriptions")
+    assert send["status"] == "sent" and "Handled manually by" in send["summary"]
+    assert "manual" in sigs(view).values()
+    sign(http, make_token, "sum1")
+    view = http.get("/discharges/jane-doe", headers=headers(make_token)).json()
+    assert view["status"] == "completed"
+    [took_over] = [e for e in deps.audit.events if e.action == "security.alert_handled_manually"]
+    assert "e-prescribing" in took_over.reason
+
+
+def test_any_suspended_task_can_be_done_by_hand(env, make_token) -> None:
+    """A rogue scheduling agent: the ward books the follow-up by phone; the rest carries on."""
+    http, watch, _ = env
+    watch.rogue = {"scheduling-agent"}
+    view = http.post("/discharges/jane-doe/start", headers=headers(make_token)).json()
+    view = http.post(f"/discharges/jane-doe/alerts/{view['alerts'][0]['id']}/manual",
+                     headers=headers(make_token), json={"note": "booked by phone"}).json()
+    assert view["alerts"][0]["status"] == "handled_manually"
+    assert statuses(view)["scheduling"] == "done" and statuses(view)["instructions"] == "done"
+    for sid in ("rx1", "sum1"):
+        view = sign(http, make_token, sid)
+    assert view["status"] == "completed"

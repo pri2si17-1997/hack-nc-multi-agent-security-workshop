@@ -20,6 +20,7 @@ from pydantic import BaseModel
 
 from hacknc.agents.runtime import ToolDenied
 from hacknc.common.auth import AuthError
+from hacknc.ui import presenters
 from hacknc.ui.context import UiContext
 from hacknc.ui.routes.backends import GatewayUnavailable, coordinator, ehr
 from hacknc.ui.sessions import UserSession
@@ -44,7 +45,8 @@ def register(app: FastAPI, ctx: UiContext) -> None:
                                    PORTAL)
         home = [m for m in meds["medications"] if m.get("category") != "inpatient"]
         return {"patient": me["patient"], "consent": me["consent"], "pharmacy": me["pharmacy"],
-                "medications": home, "requests": list(reversed(requests["requests"]))}
+                "medications": home, "requests": list(reversed(requests["requests"])),
+                "suggestions": presenters.portal_suggestions(home)}
 
     @app.get("/portal")
     async def portal_page(request: Request) -> Response:

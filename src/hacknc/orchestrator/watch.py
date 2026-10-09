@@ -3,9 +3,10 @@
 * ``TaskAssigner``  before delegating, tell the EHR gateway which patient the task is about
                     (``POST /tasks/assign``, scope ``task:assign``, as the coordinator itself);
                     after it, release that binding (``POST /tasks/release``)
-* ``AlertWatch``    after a task, read the **gateway's own audit entries** for that agent in
-                    this trace: anything the gateway denied it is a security alert. The agent
-                    is never asked: a rogue agent would not report itself.
+* ``AlertWatch``    after a task, read the **gateways' own audit entries** for that agent in
+                    this trace: anything the EHR gateway denied it, or a signed item it changed
+                    (the signature service's tamper check), is a security alert. The agent is
+                    never asked: a rogue agent would not report itself.
 """
 
 from __future__ import annotations
@@ -20,8 +21,11 @@ from hacknc.audit_service.client import AuditApi
 from hacknc.common.audit import current_trace_id
 from hacknc.common.auth.service_tokens import ServiceTokenProvider
 
-# Gateway denials that mean "outside its job", not "a partner is switched off".
+# Denials that are never an honest mistake: a tool outside the agent's job or patient (EHR
+# gateway), or content changed after a physician signed it (signature service). Not "a partner
+# is switched off", and not a disclosure refused for lack of a signature (that one is silent).
 OVERSTEP_ACTIONS = {"mcp.tool_call"}
+TAMPER_ACTIONS = {"approval.tamper_detected"}
 
 
 class AssignmentError(RuntimeError):
@@ -67,11 +71,17 @@ class AlertWatch:
             return []
 
         def read() -> list[dict[str, Any]]:
-            result = self._audit.events(self._tokens(), limit=100, decision="deny",
-                                        writer="ehr-mcp", trace_id=trace_id)
-            return result.body.get("entries", []) if result.ok else []
+            entries = []
+            for writer in ("ehr-mcp", "approval-service"):
+                result = self._audit.events(self._tokens(), limit=100, decision="deny",
+                                            writer=writer, trace_id=trace_id)
+                entries += result.body.get("entries", []) if result.ok else []
+            return entries
 
         entries = await anyio.to_thread.run_sync(read)
-        return [e for e in entries
-                if e["seq"] > after_seq and e.get("action") in OVERSTEP_ACTIONS
-                and (e.get("agent_chain") or [None])[0] == agent]
+        # The signature service records the chain that filed the draft: [the agent, ehr-mcp].
+        return sorted((e for e in entries
+                       if e["seq"] > after_seq
+                       and e.get("action") in OVERSTEP_ACTIONS | TAMPER_ACTIONS
+                       and (e.get("agent_chain") or [None])[0] == agent),
+                      key=lambda e: e["seq"])
