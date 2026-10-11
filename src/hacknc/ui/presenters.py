@@ -125,7 +125,7 @@ def flag_groups(flags: dict[str, bool]) -> list[dict[str, Any]]:
     return [
         {"title": "AI model", "hint": "The coordinator and every agent that decides or "
                                       "writes are Strands agents on a language model "
-                                      "(Bedrock gpt-oss, Ollama as fallback). Rules verify "
+                                      "(Bedrock, Ollama as fallback). Rules verify "
                                       "what they decide.",
          "items": [{"key": "ai.model", "label": "Use the language model",
                     "on": flags.get("ai.model", True),

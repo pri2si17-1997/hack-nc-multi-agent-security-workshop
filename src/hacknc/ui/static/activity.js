@@ -26,7 +26,7 @@
   const NODES = {
     user: [8, 20, "🧑 Clinician", "person"],
     orchestrator: [8, 110, "Coordinator", "agent"],
-    model: [8, 210, "✨ gpt-oss", "model"],
+    model: [8, 210, "✨ LLM", "model"],
     keycloak: [8, 310, "🔑 Keycloak", "service"],
     audit: [8, 410, "📝 Audit", "service"],
     "medrec-agent": [132, 20, "Med rec", "agent"],
@@ -118,7 +118,8 @@
     if (!node) return;
     const id = node.dataset.node;
     tip.replaceChildren(el("strong", "", isAgent(id) ? agentLabel(id) : NODES[id][2]),
-                        el("p", "", ROLES[id] || ""));
+                        el("p", "", ROLES[id] || ""),
+                        ...(id === "model" ? [el("p", "", `Model: ${svg.dataset.llm || "unknown"}`)] : []));
     tip.hidden = false;
   });
   nodeLayer.addEventListener("mousemove", (event) => {

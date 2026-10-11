@@ -87,6 +87,10 @@ Open **http://localhost:8000**, pick a person and log in. **Every password is `h
 `aws login` (or `aws sso login`) first. `AWS_PROFILE` in `.env` names the profile, default
 `default`.
 
+To use another Bedrock model, set `BEDROCK_MODEL_ID` in `.env` (newer Claude models need an
+inference profile id such as `us.anthropic.claude-haiku-4-5-20251001-v1:0`). Some newer models
+reject the `temperature` setting: leave `LLM_TEMPERATURE=` empty for those. Then `make up`.
+
 ### Useful commands
 
 ```bash
@@ -212,7 +216,7 @@ Each row is a real risk of letting AI agents act in a hospital. Stage it yoursel
 
 ### The AI model, and what keeps it in check
 
-The coordinator and most specialists are **Strands agents** (AWS Bedrock gpt-oss-20b, with
+The coordinator and most specialists are **Strands agents** (AWS Bedrock, gpt-oss-20b by default, with
 Ollama as fallback). The model holds **no permissions of its own**:
 
 - **Tools**: only what the gateway lists for that agent, called with that agent's token,
@@ -317,6 +321,7 @@ tests/unit/ tests/integration/
 | Trace not found in Grafana | Wait ~10 s; traces are batched |
 | Audit page says the chain is broken | Expected after `make tamper-audit` / `make cover-up`; run `make reset-audit` |
 | Replies say *Written by rules (… session has expired …)* | `aws login`, then ask again |
-| *… AccessDeniedException …* | Enable model access for gpt-oss-20b in the Bedrock console for that region |
+| *… AccessDeniedException …* | Full message: `docker compose logs orchestrator \| grep failed`. Usually: the profile's role may not call `bedrock:InvokeModel` (with a `us.`/`global.` inference profile it needs both the profile and the model in every region it routes to), the account hasn't submitted Anthropic's use-case form (Bedrock console → Model catalog → open the model), or the role lacks `aws-marketplace:Subscribe` for the model's first use |
 | *Ollama has no qwen2.5:7b* | `ollama pull qwen2.5:7b` |
 | *… ThrottlingException …* | Bedrock quota is low: wait a minute |
+| *… temperature … deprecated / not supported …* | The model rejects `temperature`: set `LLM_TEMPERATURE=` (empty) in `.env`, then `make up` |

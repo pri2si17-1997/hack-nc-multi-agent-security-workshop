@@ -135,6 +135,7 @@ def test_provider_chain_and_names() -> None:
         ["bedrock"]
     assert friendly_model_name("us.meta.llama4-scout-17b-instruct-v1:0") == "Llama 4 Scout"
     assert friendly_model_name("openai.gpt-oss-20b-1:0") == "gpt-oss-20b"
+    assert friendly_model_name("us.anthropic.claude-haiku-4-5-20251001-v1:0") == "Claude Haiku"
 
 
 async def test_a_failed_provider_is_rebuilt_on_the_next_run() -> None:
@@ -165,3 +166,18 @@ def test_tool_inputs_with_empty_keys_are_cleaned_for_bedrock() -> None:
     assert clean_tool_input({"": " "}) == {}
     assert clean_tool_input({"decision": {"": "", "ok": [{" ": 1, "a": 2}]}}) == \
         {"decision": {"ok": [{"a": 2}]}}
+
+
+def test_models_lists_configured_ids_in_order() -> None:
+    settings = LlmSettings(llm_provider="bedrock", llm_fallback="ollama",
+                           bedrock_model_id="us.anthropic.claude-haiku-4-5-20251001-v1:0",
+                           ollama_model="qwen2.5:7b")
+    assert settings.models() == \
+        "us.anthropic.claude-haiku-4-5-20251001-v1:0 (Bedrock), then qwen2.5:7b (Ollama)"
+    assert LlmSettings(llm_provider="rules", llm_fallback="").models() == "none (rules only)"
+
+
+def test_empty_temperature_means_not_sent() -> None:
+    assert LlmSettings().llm_temperature == 0.2
+    assert LlmSettings(llm_temperature="").llm_temperature is None
+    assert LlmSettings(llm_temperature="0.5").llm_temperature == 0.5

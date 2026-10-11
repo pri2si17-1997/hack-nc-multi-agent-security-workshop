@@ -20,6 +20,7 @@ from hacknc.approval_service.client import ApprovalApi
 from hacknc.audit_service.client import AuditApi
 from hacknc.common.audit import AuditClient, AuditEvent, actor_fields
 from hacknc.common.auth import AuthError, JwtValidator, KeycloakClient, TokenClaims
+from hacknc.llm.settings import get_llm_settings
 from hacknc.partners.client import PartnerApi
 from hacknc.ui import presenters
 from hacknc.ui.oidc import OidcLogin
@@ -66,6 +67,7 @@ class UiContext:
         self.deps = deps
         self.templates = Jinja2Templates(directory=HERE / "templates")
         self.templates.env.globals["static"] = _static_url
+        self.templates.env.globals["llm_models"] = get_llm_settings().models()
 
     # ----------------------------------------------------------------- sessions
 

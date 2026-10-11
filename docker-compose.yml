@@ -12,11 +12,12 @@
 name: hacknc
 
 # The three agents that call the language model (summary, instructions, chart) get the
-# presenter's AWS profile read-only; login/ stays writable because `aws login` refreshes its
-# token there. No other container sees AWS credentials.
+# presenter's AWS profile read-only; login/ and sso/ stay writable because `aws login` and
+# `aws sso login` profiles refresh their token there. No other container sees AWS credentials.
 x-aws-profile: &aws-profile
   - ${HOME}/.aws:/home/app/.aws:ro
   - ${HOME}/.aws/login:/home/app/.aws/login
+  - ${HOME}/.aws/sso:/home/app/.aws/sso
 
 # Shared, NON-secret settings from .env. No secret is listed here: each service below names
 # only the secrets it needs (its own Keycloak client secret, and the demo admin key only where
@@ -31,6 +32,8 @@ x-settings: &settings
   LLM_TIMEOUT_SECONDS: "${LLM_TIMEOUT_SECONDS:-30}"
   LLM_MAX_TOKENS: "${LLM_MAX_TOKENS:-4000}"
   LLM_REASONING_EFFORT: "${LLM_REASONING_EFFORT:-low}"
+  # "-" not ":-": an empty LLM_TEMPERATURE in .env must stay empty (= not sent).
+  LLM_TEMPERATURE: "${LLM_TEMPERATURE-0.2}"
   AWS_PROFILE: "${AWS_PROFILE:-default}"
   AWS_REGION: "${AWS_REGION:-}"
   BEDROCK_MODEL_ID: "${BEDROCK_MODEL_ID:-openai.gpt-oss-20b-1:0}"

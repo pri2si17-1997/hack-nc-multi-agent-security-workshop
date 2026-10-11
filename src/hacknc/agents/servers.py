@@ -8,7 +8,7 @@ Every tool follows the same steps, each visible as a span in the activity feed:
 4. call them; denied calls and withheld records come back with reasons
 5. decide and write
 
-Who decides: every agent that makes a decision is a Strands agent (Bedrock gpt-oss, Ollama as
+Who decides: every agent that makes a decision is a Strands agent (Bedrock, Ollama as
 fallback) with its *own* gateway tools, reached with its *own* delegated token:
 
 * medication reconciliation  the model proposes the discharge list; the rules verify it, and
